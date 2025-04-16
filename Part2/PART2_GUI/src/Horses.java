@@ -1,3 +1,20 @@
+/*
+
+DESCRIPTION OF CLASS:
+GUI Horse class
+this is the frontend horse
+
+This handles:
+    - display
+    - colours
+    - pixel position on screen
+
+
+@author ZAYNAB A KHAN
+@version (16/04)
+ */
+
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -15,7 +32,7 @@ public class Horses {
 
 
     //constructor to set up a horse
-    public Horses(Horse name,int y, Color color){
+    public Horses(Horse logicHorse,int y, Color color){
         this.logicHorse = logicHorse;
         this.x = 50;
         this.y = y;
@@ -36,4 +53,11 @@ public class Horses {
     public String getName(){
         return logicHorse.getName();
     }//END getName
+
+
+    public char getSymbol(){
+        return logicHorse.getSymbol();
+    }//END getSymbol
+
+
 }//END Horses

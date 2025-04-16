@@ -44,13 +44,21 @@ public class raceTrack extends JPanel {
 
         // Draw horses
         for (Horses h : horses) {
+
+            //sync position
             h.updatePosition();
+
+
             g2d.setColor(h.color);
-            g2d.fillRect(h.x, h.y - 20, 40, 20);
+            g2d.setFont(new Font("Serif", Font.BOLD, 40));
+            g2d.drawString(String.valueOf(h.getSymbol()), h.x, h.y);
+
+            g2d.setFont(new Font("SansSerif", Font.PLAIN, 12));
+            g2d.setColor(Color.BLACK);
+            g2d.drawString(h.getName(), h.x, h.y - 30);
 
             //to draw horses name above it
-            g2d.setColor(Color.BLACK);
-            g2d.drawString(h.getName(), h.x, h.y - 25);;
+            g2d.drawString(h.getName(), h.x, h.y - 30);;
         }
     }//END paintComponent
 
