@@ -3,21 +3,37 @@ import java.awt.*;
 
 public class Horses {
 
-    //posistion of horse on screen
-    int x,y;
+    //position of horse on screen
+    int x;
+    int y;
 
     //colour of horse
     Color color;
 
-    //name of horse
-    String name;
+    //logic horse reference (stores name, confidence, etc.)
+    Horse logicHorse;
 
 
     //constructor to set up a horse
-    public Horses(String name,int x,int y, Color color){
-        this.name = name;
-        this.x = x;
+    public Horses(Horse name,int y, Color color){
+        this.logicHorse = logicHorse;
+        this.x = 50;
         this.y = y;
         this.color = color;
     }//END Horses constructor
+
+
+    //method to keep horse's visual position in sync with its logic distance
+    public void updatePosition(){
+
+        //scale distance to pixels
+        this.x = 50 + logicHorse.getDistanceTravelled() * 15;
+
+    }//END updatePosition
+
+
+    //helper method for GUI to get name of horse
+    public String getName(){
+        return logicHorse.getName();
+    }//END getName
 }//END Horses

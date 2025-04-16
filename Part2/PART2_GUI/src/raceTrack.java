@@ -12,14 +12,12 @@ public class raceTrack extends JPanel {
     List<Horses> horses = new ArrayList<>(); //initialize the list
 
     //constructor for raceTrack
-    public raceTrack() {
+    public raceTrack(Horse h1,Horse h2, Horse h3) {
 
+        horses.add(new Horses(h1,90,Color.PINK));
+        horses.add(new Horses(h2,190,Color.BLUE));
+        horses.add(new Horses(h3,290,Color.ORANGE));
 
-        //adding 4 horses, one per lane
-        horses.add(new Horses("PINKY",50,90,Color.PINK));
-        horses.add(new Horses("WILLIAM",50,190,Color.BLUE));
-        horses.add(new Horses("PIPI",50,290,Color.ORANGE));
-        horses.add(new Horses("BROWNIE",50,390,Color.CYAN));
     }//END raceTrack constructor
 
 
@@ -35,10 +33,10 @@ public class raceTrack extends JPanel {
         setBackground(Color.GREEN);
 
 
-        //draw 4 horizontal lanes
+        //draw 3 horizontal lanes
         g2d.setColor(Color.WHITE);
         //for loop for filled white rectangles (meant to be lanes)
-        for(int i=1;i<=4;i++){
+        for(int i=1;i<=3;i++){
             // startX, startY, width, height
             g2d.fillRect(50,i*100,700,5);
         }//END for
@@ -46,12 +44,13 @@ public class raceTrack extends JPanel {
 
         // Draw horses
         for (Horses h : horses) {
+            h.updatePosition();
             g2d.setColor(h.color);
             g2d.fillRect(h.x, h.y - 20, 40, 20);
 
             //to draw horses name above it
             g2d.setColor(Color.BLACK);
-            g2d.drawString(h.name, h.x, h.y - 25);;
+            g2d.drawString(h.getName(), h.x, h.y - 25);;
         }
     }//END paintComponent
 
