@@ -87,8 +87,14 @@ public class raceTrack extends JPanel {
 
 
     public void setWinner(String name){
-        raceOver = true;
-        winnerName = name;
+        if(name == null || name.isEmpty()){
+            raceOver = false;
+            winnerName = "";
+        }//END if
+        else{
+            raceOver = true;
+            winnerName = name;
+        }//END else
     }//END setWinner
 
 

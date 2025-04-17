@@ -9,6 +9,18 @@ public class window {
     public static void main(String[] args){
         //creating main window
 
+        final Horse[] pinky = new Horse[1];
+        final Horse[] william = new Horse[1];
+        final Horse[] pipi = new Horse[1];
+        final Race[] race = new Race[1];
+        final raceTrack[] trackPanel = new raceTrack[1];
+
+
+
+
+
+
+
         //creating JFrame called frame
         JFrame frame = new JFrame("Horse Race Sim");
 
@@ -25,62 +37,128 @@ public class window {
         frame.setVisible(true);
 
 
-        //logic setup
-        Horse pinky = new Horse('◇', "PINKY", 0.8);
-        Horse william = new Horse('◆', "WILLIAM", 0.6);
-        Horse pipi = new Horse('♞', "PIPI", 0.5);
-
-        Race race = new Race(30);
-        race.addHorse(pinky, 1);
-        race.addHorse(william, 2);
-        race.addHorse(pipi, 3);
-        race.startRace();
 
 
 
-        //creating instance of raceTrack panel
-        raceTrack trackPanel = new raceTrack(pinky,william,pipi,race.getRaceLength());
-        frame.add(trackPanel, BorderLayout.CENTER);
+
+
 
         //create a start button
         JButton startButton = new JButton("Start");
-        frame.add(startButton, BorderLayout.SOUTH);
+
+        //restart button
+        JButton restartButton = new JButton("Restart");
+
+
+        //creating a button JPanel with flow layout
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new FlowLayout());
+        buttonPanel.add(startButton);
+        buttonPanel.add(restartButton);
+
+
+        //adding the buttonPanel to the south of the frame
+        frame.add(buttonPanel, BorderLayout.SOUTH);
+
+
+
+
+
+
+
 
 
         //timer setup
-        Timer timer = new Timer(100,new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e){
-                race.updateRaceState();
-                trackPanel.repaint();
+        Timer timer = new Timer(100, e -> {
+            race[0].updateRaceState();
+            trackPanel[0].repaint();
 
-                if(race.isRaceFinished()){
-                    ((Timer) e.getSource()).stop();
-
-                    String winner = race.getWinnerNames();
-
-                    //pull just name from result
-                    String nameOnly = winner.split(" ")[0];
-                    trackPanel.setWinner(nameOnly);
-                    trackPanel.repaint();
-
-                    JOptionPane.showMessageDialog(frame, race.getWinnerNames());
-                }//END if
-            }//END actionPerformed
+            if (race[0].isRaceFinished()) {
+                ((Timer) e.getSource()).stop();
+                String winner = race[0].getWinnerNames();
+                String nameOnly = winner.split(" ")[0];
+                trackPanel[0].setWinner(nameOnly);
+                JOptionPane.showMessageDialog(frame, winner);
+            }
         });
+
+
+        //confidence sliders
+        JSlider pinkySlider = new JSlider(0,100,80);    //0.8 default
+        JSlider williamSlider = new JSlider(0,100,60);  //0.6 default
+        JSlider pipiSlider = new JSlider(0,100,50);     //0.5 default
+
+        pinkySlider.setMajorTickSpacing(20);
+        williamSlider.setMajorTickSpacing(20);
+        pipiSlider.setMajorTickSpacing(20);
+
+        pinkySlider.setPaintTicks(true);
+        williamSlider.setPaintTicks(true);
+        pipiSlider.setPaintTicks(true);
+
+        pinkySlider.setPaintLabels(true);
+        williamSlider.setPaintLabels(true);
+        pipiSlider.setPaintLabels(true);
+
+
+
+        //creating panel to hold sliders
+        JPanel sliderPanel = new JPanel();
+        sliderPanel.setLayout(new GridLayout(3,2));     //label and a slider for each horse
+
+        sliderPanel.add(new JLabel("PINKY Confidence"));
+        sliderPanel.add(pinkySlider);
+
+        sliderPanel.add(new JLabel("WILLIAM Confidence"));
+        sliderPanel.add(williamSlider);
+
+        sliderPanel.add(new JLabel("PIPI Confidence"));
+        sliderPanel.add(pipiSlider);
+
+        //END confidence sliders
+
 
 
         //Button action
         startButton.addActionListener(e -> {
-            race.startRace();
+            pinky[0] = new Horse('◇', "PINKY", pinkySlider.getValue() / 100.0);
+            william[0] = new Horse('◆', "WILLIAM", williamSlider.getValue() / 100.0);
+            pipi[0] = new Horse('♞', "PIPI", pipiSlider.getValue() / 100.0);
+
+            race[0] = new Race(30);
+            race[0].addHorse(pinky[0], 1);
+            race[0].addHorse(william[0], 2);
+            race[0].addHorse(pipi[0], 3);
+            race[0].startRace();
+
+            trackPanel[0] = new raceTrack(pinky[0], william[0], pipi[0], 30);
+            frame.add(trackPanel[0], BorderLayout.CENTER);
+            frame.revalidate();
+            frame.repaint();
+
             timer.start();
         });
 
-        //restart button
+
+        restartButton.addActionListener(e -> {
+            pinky[0].goBackToStart();
+            william[0].goBackToStart();
+            pipi[0].goBackToStart();
+
+            race[0].startRace();
+            trackPanel[0].setWinner("");
+            trackPanel[0].repaint();
+        });
+
+
+        //END button action
+
+
+
     }//END main
 
 
 
 
 
-}
+}//END class window
