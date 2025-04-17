@@ -48,11 +48,13 @@ public class raceTrack extends JPanel {
             //sync position
             h.updatePosition();
 
-
+            //GUI horse
             g2d.setColor(h.color);
             g2d.setFont(new Font("Serif", Font.BOLD, 40));
             g2d.drawString(String.valueOf(h.getSymbol()), h.x, h.y);
 
+
+            //GUI horse name
             g2d.setFont(new Font("SansSerif", Font.PLAIN, 12));
             g2d.setColor(Color.BLACK);
             g2d.drawString(h.getName(), h.x, h.y - 30);
