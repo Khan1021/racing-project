@@ -39,7 +39,7 @@ public class window {
 
 
         //creating instance of raceTrack panel
-        raceTrack trackPanel = new raceTrack(pinky,william,pipi);
+        raceTrack trackPanel = new raceTrack(pinky,william,pipi,race.getRaceLength());
         frame.add(trackPanel, BorderLayout.CENTER);
 
         //create a start button
@@ -57,6 +57,13 @@ public class window {
                 if(race.isRaceFinished()){
                     ((Timer) e.getSource()).stop();
 
+                    String winner = race.getWinnerNames();
+
+                    //pull just name from result
+                    String nameOnly = winner.split(" ")[0];
+                    trackPanel.setWinner(nameOnly);
+                    trackPanel.repaint();
+
                     JOptionPane.showMessageDialog(frame, race.getWinnerNames());
                 }//END if
             }//END actionPerformed
@@ -68,7 +75,12 @@ public class window {
             race.startRace();
             timer.start();
         });
+
+        //restart button
     }//END main
+
+
+
 
 
 }

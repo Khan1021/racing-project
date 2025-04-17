@@ -9,14 +9,17 @@ import java.util.ArrayList;
 
 public class raceTrack extends JPanel {
 
+    private boolean raceOver = false;
+    private String winnerName="";
+
     List<Horses> horses = new ArrayList<>(); //initialize the list
 
     //constructor for raceTrack
-    public raceTrack(Horse h1,Horse h2, Horse h3) {
+    public raceTrack(Horse h1,Horse h2, Horse h3, int raceLength) {
 
-        horses.add(new Horses(h1,90,Color.PINK));
-        horses.add(new Horses(h2,190,Color.BLUE));
-        horses.add(new Horses(h3,290,Color.ORANGE));
+        horses.add(new Horses(h1,90,Color.PINK,raceLength));
+        horses.add(new Horses(h2,190,Color.BLUE,raceLength));
+        horses.add(new Horses(h3,290,Color.ORANGE,raceLength));
 
     }//END raceTrack constructor
 
@@ -61,8 +64,32 @@ public class raceTrack extends JPanel {
 
             //to draw horses name above it
             g2d.drawString(h.getName(), h.x, h.y - 30);;
-        }
+
+
+
+            //drawing finish line on track
+            int finishX=750; //750 = 50 (start) + 700 (track length)
+            g2d.setColor(Color.BLACK);
+            g2d.fillRect(finishX,90 - 20, 5, 260); // vertical finish line post)
+
+
+            //drawing flag icon
+            g2d.setFont(new Font("Serif",Font.BOLD,24));
+            g2d.drawString("\uD83C\uDFC1",finishX - 5, 80); //draw flag at the top
+
+            if(raceOver && h.getName().equalsIgnoreCase(winnerName)){
+                g2d.setColor(Color.MAGENTA);
+                g2d.setFont(new Font("Serif",Font.BOLD,20));
+                g2d.drawString("\uD83C\uDF89 WINNER \uD83C\uDF89",h.x,h.y-50);
+            }//END if
+        }//END for
     }//END paintComponent
+
+
+    public void setWinner(String name){
+        raceOver = true;
+        winnerName = name;
+    }//END setWinner
 
 
 }//END raceTrack

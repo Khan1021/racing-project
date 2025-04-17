@@ -11,7 +11,7 @@ This handles:
 
 
 @author ZAYNAB A KHAN
-@version (16/04)
+@version (17/04)
  */
 
 
@@ -31,21 +31,29 @@ public class Horses {
     Horse logicHorse;
 
 
-    //constructor to set up a horse
-    public Horses(Horse logicHorse,int y, Color color){
+    int raceLength;
+
+    //constructor to set up a horse and race length
+    public Horses(Horse logicHorse,int y, Color color, int raceLength) {
         this.logicHorse = logicHorse;
         this.x = 50;
         this.y = y;
         this.color = color;
+        this.raceLength = raceLength;
     }//END Horses constructor
 
 
     //method to keep horse's visual position in sync with its logic distance
     public void updatePosition(){
 
-        //scale distance to pixels
-        this.x = 50 + logicHorse.getDistanceTravelled() * 15;
+        int trackStartX = 50;
+        int trackWidth = 700;
 
+        //scale position based on how far horse has travelled vs race length
+        //ensures, distance travelled == raceLength
+        double progress =  (double)logicHorse.getDistanceTravelled()/raceLength;
+
+        this.x = trackStartX + (int)(progress * trackWidth);
     }//END updatePosition
 
 
@@ -54,9 +62,9 @@ public class Horses {
         return logicHorse.getName();
     }//END getName
 
-
+    //if horse falls show 'x' icon
     public char getSymbol(){
-        return logicHorse.getSymbol();
+        return logicHorse.getDisplaySymbol();
     }//END getSymbol
 
 
