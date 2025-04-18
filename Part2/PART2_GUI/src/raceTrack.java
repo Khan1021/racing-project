@@ -15,11 +15,11 @@ public class raceTrack extends JPanel {
     List<Horses> horses = new ArrayList<>(); //initialize the list
 
     //constructor for raceTrack
-    public raceTrack(Horse h1,Horse h2, Horse h3, int raceLength) {
+    public raceTrack(Horse h1,Horse h2, Horse h3, int raceLength,Color c1,Color c2,Color c3) {
 
-        horses.add(new Horses(h1,90,Color.PINK,raceLength));
-        horses.add(new Horses(h2,190,Color.BLUE,raceLength));
-        horses.add(new Horses(h3,290,Color.ORANGE,raceLength));
+        horses.add(new Horses(h1,90,c1,raceLength));
+        horses.add(new Horses(h2,190,c2,raceLength));
+        horses.add(new Horses(h3,290,c3,raceLength));
 
     }//END raceTrack constructor
 
