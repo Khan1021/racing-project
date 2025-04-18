@@ -1,7 +1,7 @@
 import java.util.concurrent.TimeUnit;
 import java.lang.Math;
 import java.util.ArrayList;
-
+import java.util.List;
 /**
  * A three-horse race, each horse running in its own lane
  * for a given distance
@@ -12,9 +12,8 @@ import java.util.ArrayList;
 public class Race
 {
     private int raceLength;
-    private Horse lane1Horse;
-    private Horse lane2Horse;
-    private Horse lane3Horse;
+
+    private List<Horse> horses;
 
     /**
      * Constructor for objects of class Race
@@ -22,13 +21,11 @@ public class Race
      *
      * @param distance the length of the racetrack (in metres/yards...)
      */
-    public Race(int distance)
+    public Race(List<Horse> horses,int distance)
     {
-        // initialise instance variables
-        raceLength = distance;
-        lane1Horse = null;
-        lane2Horse = null;
-        lane3Horse = null;
+        // initialise  variables
+        this.horses = horses;
+        this.raceLength = distance;
     }//END Race constructor
 
     /**
@@ -37,25 +34,7 @@ public class Race
      * @param theHorse the horse to be added to the race
      * @param laneNumber the lane that the horse will be added to
      */
-    public void addHorse(Horse theHorse, int laneNumber)
-    {
-        if (laneNumber == 1)
-        {
-            lane1Horse = theHorse;
-        }
-        else if (laneNumber == 2)
-        {
-            lane2Horse = theHorse;
-        }
-        else if (laneNumber == 3)
-        {
-            lane3Horse = theHorse;
-        }
-        else
-        {
-            System.out.println("Cannot add horse to lane " + laneNumber + " because there is no such lane");
-        }
-    }//END addHorse
+
 
     /**
      * Start the race
@@ -69,18 +48,24 @@ public class Race
         boolean finished = false;
 
         //reset all the lanes (all horses not fallen and back to 0).
-        lane1Horse.goBackToStart();
-        lane2Horse.goBackToStart();
-        lane3Horse.goBackToStart();
+        for(Horse h: horses){
+            h.goBackToStart();
+        }//END for
     }//END startRace
 
 
     //Will use a java swing timer to call on this once every 100ms
     public void updateRaceState() {
-        moveHorse(lane1Horse);
-        moveHorse(lane2Horse);
-        moveHorse(lane3Horse);
-    }
+       for(Horse h : horses){
+           moveHorse(h);
+       }//END for
+
+
+        //debugging
+        for(Horse h: horses){
+            System.out.println(h.getName()+" distance "+h.getDistanceTravelled());
+        }//END for
+    }//END updateRaceState
 
 
 
@@ -135,78 +120,31 @@ public class Race
 
 
 
-    /*
-    this method announces the winner and accounts for the situation where
-    there is a draw
-     */
-    private void announceResult(){
-        //create a list to hold the winning horses
-        ArrayList<Horse> winners = new ArrayList<>();
 
-        if(raceWonBy(lane1Horse)){
-            winners.add(lane1Horse);
-        }//END if
-        if(raceWonBy(lane2Horse)){
-            winners.add(lane2Horse);
-        }//END if
-        if(raceWonBy(lane3Horse)){
-            winners.add(lane3Horse);
-        }//END if
 
-        //announcing result based on the number of winners
-        if(winners.size() >1){
-            System.out.print("It is a draw between: ");
-            for(Horse i:winners){
-                System.out.print(i.getName() + " ");
-            }//END for
-            System.out.println();
 
-        }//END if
-        else if (winners.size() ==1){
-            System.out.println(winners.get(0).getName() + " has won!");
-        }//END else if
-        else{
-            //this is the case where there are no winners, maybe they all fell
-            System.out.println("There is no winner!");
-        }//END else
-    }//END announceResult
 
-    /***
-     * print a character a given number of times.
-     * e.g. printmany('x',5) will print: xxxxx
-     *
-     * @param aChar the character to Print
-     */
-    private void multiplePrint(char aChar, int times)
-    {
-        int i = 0;
-        while (i < times)
-        {
-            System.out.print(aChar);
-            i = i + 1;
-        }
-    }
 
 
     //helper methods for the GUI
     public boolean isRaceFinished(){
-        return (raceWonBy(lane1Horse) || raceWonBy(lane2Horse)|| raceWonBy(lane3Horse)||allFallen());
+        for(Horse h: horses){
+            if(raceWonBy(h)){return true;}
+        }//END for
+
+        return allFallen();
     }//END isRaceOve r
 
     public String getWinnerNames(){
-        ArrayList<Horse> winners = new ArrayList<>();
+        List<Horse> winners = new ArrayList<>();
 
-        if(raceWonBy(lane1Horse)){
-            winners.add(lane1Horse);
-        }//END if
+        for(Horse h:horses){
+            if(raceWonBy(h)){
+                winners.add(h);
+            }//END if
+        }//END for
 
-        if(raceWonBy(lane2Horse)){
-            winners.add(lane2Horse);
-        }//END if
 
-        if(raceWonBy(lane3Horse)){
-            winners.add(lane3Horse);
-        }//END if
 
         if(winners.size()==0){
             return ("There is no winner!");
@@ -225,7 +163,12 @@ public class Race
 
     //method to return boolean value true or false if all horses have fallen
     private boolean allFallen(){
-        return(lane1Horse.hasFallen() && lane2Horse.hasFallen() && lane3Horse.hasFallen());
+        for(Horse h: horses){
+            if(!h.hasFallen()) {
+                return false;
+            }//END if
+        }//END for
+        return true;
     }//END allFallen
 
 

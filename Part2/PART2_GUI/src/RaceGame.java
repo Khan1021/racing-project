@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import javax.swing.Timer;
 import java.util.*;
+import java.util.List;
 
 
 
@@ -11,15 +12,23 @@ public class RaceGame {
     private JFrame frame;
     private raceTrack trackPanel;
     private Race race;
-    private Horse pinky, william, pipi;
+
+    private JComboBox<Integer> laneSelector;
+
+
+    private List<Horse> horses = new ArrayList<>();
+    private List<JSlider> sliders = new ArrayList<>();
+    private List<JComboBox<String>> colourBoxes = new ArrayList<>();
+    private List<JComboBox<String>> symbolBoxes = new ArrayList<>();
+    private List<JSlider> confidenceSliders = new ArrayList<>();
+
+
 
 
     //race timer
     private Timer timer;
 
 
-    //the slider for the horse confidence
-    private JSlider pinkySlider, williamSlider, pipiSlider;
 
     private JPanel sliderPanel; //store reference to panel so we can remove later
     //END slider
@@ -40,30 +49,40 @@ public class RaceGame {
             "Gray", Color.GRAY
     );
 
-    private JComboBox<String> pinkyColourBox;
-    private JComboBox<String> williamColourBox;
-    private JComboBox<String> pipiColourBox;
-
-    private JComboBox<String> pinkySymbolBox;
-    private JComboBox<String> williamSymbolBox;
-    private JComboBox<String> pipiSymbolBox;
 
     //END JComboBox
 
     public RaceGame() {
         setupFrame();
-        setupSliders();
         setupButtons();
+        regenerateHorseSettings();
         frame.setVisible(true);
-    }
+    }//END constructoe RaceGame
+
+
+
+
 
     private void setupFrame() {
+
         frame = new JFrame("Horse Race Sim");
         frame.setSize(800, 600);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
 
-    }
+
+        //setting up lane selector
+        laneSelector = new JComboBox<>(new Integer[]{1,2,3,4,5,6});
+        laneSelector.setSelectedIndex(2);   //default to 3 lanes
+
+        //when user changes lane count, regenerate settings
+        laneSelector.addActionListener(e -> regenerateHorseSettings());
+
+        //putting this laneSelector on the left side of the window
+        frame.add(laneSelector,BorderLayout.WEST);
+    }//END setupFrame
+
+
 
     //helper method
     private JPanel createHorseSettingsPanel(String name, JSlider slider, JComboBox<String> colorBox, JComboBox<String> symbolBox){
@@ -88,31 +107,7 @@ public class RaceGame {
     }//END createHorseSettingsPanel
 
 
-    private void setupSliders() {
-        sliderPanel = new JPanel(new GridLayout(3,1));
 
-        //for each horse
-        // Create PINKY settings panel and add to sliderPanel
-        pinkySlider = createSlider(80);
-        pinkyColourBox = new JComboBox<>(colourNames);
-        pinkySymbolBox = new JComboBox<>(horseSymbols);
-        sliderPanel.add(createHorseSettingsPanel("PINKY", pinkySlider, pinkyColourBox, pinkySymbolBox));
-
-        // Create WILLIAM settings panel and add to sliderPanel
-        williamSlider = createSlider(60);
-        williamColourBox = new JComboBox<>(colourNames);
-        williamSymbolBox = new JComboBox<>(horseSymbols);
-        sliderPanel.add(createHorseSettingsPanel("WILLIAM", williamSlider, williamColourBox, williamSymbolBox));
-
-        // Create PIPI settings panel and add to sliderPanel
-        pipiSlider = createSlider(50);
-        pipiColourBox = new JComboBox<>(colourNames);
-        pipiSymbolBox = new JComboBox<>(horseSymbols);
-        sliderPanel.add(createHorseSettingsPanel("PIPI", pipiSlider, pipiColourBox, pipiSymbolBox));
-
-
-        frame.add(sliderPanel, BorderLayout.NORTH);
-    }
 
     private JSlider createSlider(int initial) {
         JSlider slider = new JSlider(0, 100, initial);
@@ -120,7 +115,24 @@ public class RaceGame {
         slider.setPaintTicks(true);
         slider.setPaintLabels(true);
         return slider;
-    }
+    }//END createSlider
+
+
+
+
+
+    private List<Color> getSelectedColors(){
+        List<Color> colours = new ArrayList<>();
+
+        for (JComboBox<String> box : colourBoxes){
+            colours.add(colorMap.get(box.getSelectedItem()));
+        }//END for each
+        return colours;
+    }//END getSelectedColours
+
+
+
+
 
     private void setupButtons() {
         JButton startButton = new JButton("Start");
@@ -134,7 +146,7 @@ public class RaceGame {
 
         startButton.addActionListener(e -> startRace());
         restartButton.addActionListener(e -> restartRace());
-    }
+    }//END setupButtons
 
     private void startRace() {
 
@@ -150,47 +162,44 @@ public class RaceGame {
         }//END if
 
 
-        //fetch symbols from JComboBoxes
-        char pinkyChar = ((String) pinkySymbolBox.getSelectedItem()).charAt(0);
-        char williamChar = ((String) williamSymbolBox.getSelectedItem()).charAt(0);
-        char pipiChar = ((String) pipiSymbolBox.getSelectedItem()).charAt(0);
+        horses.clear();
 
+        for(int i=0;i<sliders.size();i++){
+            char symbol = ((String) symbolBoxes.get(i).getSelectedItem()).charAt(0);
+            String name = "HORSE "+ (i+1);
+            double confidence = sliders.get(i).getValue()/100;
 
+            Horse h = new Horse(symbol,name,confidence);
+            horses.add(h);
 
+        }//END for
 
-        // create horses with slider values
-        pinky = new Horse(pinkyChar, "PINKY", pinkySlider.getValue() / 100.0);
-        william = new Horse(williamChar, "WILLIAM", williamSlider.getValue() / 100.0);
-        pipi = new Horse(pipiChar, "PIPI", pipiSlider.getValue() / 100.0);
-
-
-        Color pinkyColour = colorMap.get((String) pinkyColourBox.getSelectedItem());
-        Color williamColour = colorMap.get((String) williamColourBox.getSelectedItem());
-        Color pipiColour = colorMap.get((String) pipiColourBox.getSelectedItem());
-
+        List<Horses> guiHorses = new ArrayList<>();
+        for(int i=0;i<horses.size();i++){
+            int y= 90 + i* 100;
+            Color color = colorMap.get(colourBoxes.get(i).getSelectedItem());
+            guiHorses.add(new Horses(horses.get(i), y, color, 30));
+        }//END for
 
         // Remove the racetrack
         if (trackPanel != null) {
             frame.remove(trackPanel);
-        }
+        }//END if
 
 
-        // create race and add horses
-        race = new Race(30);
-        race.addHorse(pinky, 1);
-        race.addHorse(william, 2);
-        race.addHorse(pipi, 3);
-        race.startRace();
+        //get selected coat colour
+        List<Color> colours = getSelectedColors();
 
-        // create track panel
-        trackPanel = new raceTrack(pinky, william, pipi, race.getRaceLength(),pinkyColour,williamColour,pipiColour);
-
-        frame.add(trackPanel, BorderLayout.CENTER);
-
-
+        //creating race and track
+        int raceLength = 30;
+        race = new Race(horses, raceLength);
+        trackPanel = new raceTrack(guiHorses);
+        frame.add(trackPanel,BorderLayout.CENTER);
         //refresh layout
         frame.revalidate();
         frame.repaint();
+
+
 
         // setup timer
         timer = new Timer(100, evt -> {
@@ -212,40 +221,61 @@ public class RaceGame {
         timer.start();
     }//END startRace
 
+
+
     private void restartRace() {
+
+        if (timer != null && timer.isRunning()) {
+            timer.stop();
+        }
+
 
         // Remove the racetrack
         if (trackPanel != null) {
             frame.remove(trackPanel);
+            trackPanel=null;
         }//END if
 
-
-
-        // Add the sliders back
-        if(sliderPanel !=null) {
-            frame.add(sliderPanel, BorderLayout.NORTH);
-        }//END if
-
-        //resetting logic + visuals
-        if (race != null && pinky != null && william != null && pipi != null) {
-            pinky.goBackToStart();
-            william.goBackToStart();
-            pipi.goBackToStart();
-
-            race.startRace();
-            trackPanel.setWinner("");
-            trackPanel.repaint();
-        }//END if
-
-
-        //resetting confidence values to default
-        pinkySlider.setValue(80);
-        williamSlider.setValue(60);
-        pipiSlider.setValue(50);
-
+        regenerateHorseSettings();
 
         frame.revalidate(); //  re-layout the frame
         frame.repaint();    //  force redraw
 
     }//END restartRace
+
+
+
+
+
+    //when user selects a number of lanes, it will recreate the horse configuration panels
+    private void regenerateHorseSettings() {
+        if (sliderPanel != null) {
+            frame.remove(sliderPanel);
+        }
+
+        sliderPanel = new JPanel(new GridLayout(0, 1)); // dynamic rows
+        sliders.clear();
+        colourBoxes.clear();
+        symbolBoxes.clear();
+
+        int count = (int) laneSelector.getSelectedItem();
+
+        for (int i = 0; i < count; i++) {
+            JSlider slider = createSlider(50);
+            JComboBox<String> colourBox = new JComboBox<>(colourNames);
+            JComboBox<String> symbolBox = new JComboBox<>(horseSymbols);
+
+            sliders.add(slider);
+            colourBoxes.add(colourBox);
+            symbolBoxes.add(symbolBox);
+
+            String name = "HORSE " + (i + 1);
+            sliderPanel.add(createHorseSettingsPanel(name, slider, colourBox, symbolBox));
+        }
+
+        frame.add(sliderPanel, BorderLayout.NORTH);
+        frame.revalidate();
+        frame.repaint();
+    }//END generateHorseSettings
+
 }//END class RaceGame

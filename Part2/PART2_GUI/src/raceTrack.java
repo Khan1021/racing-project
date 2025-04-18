@@ -15,11 +15,9 @@ public class raceTrack extends JPanel {
     List<Horses> horses = new ArrayList<>(); //initialize the list
 
     //constructor for raceTrack
-    public raceTrack(Horse h1,Horse h2, Horse h3, int raceLength,Color c1,Color c2,Color c3) {
+    public raceTrack(List<Horses> horses) {
+        this.horses = horses;
 
-        horses.add(new Horses(h1,90,c1,raceLength));
-        horses.add(new Horses(h2,190,c2,raceLength));
-        horses.add(new Horses(h3,290,c3,raceLength));
 
     }//END raceTrack constructor
 
@@ -39,9 +37,8 @@ public class raceTrack extends JPanel {
         //draw 3 horizontal lanes
         g2d.setColor(Color.WHITE);
         //for loop for filled white rectangles (meant to be lanes)
-        for(int i=1;i<=3;i++){
-            // startX, startY, width, height
-            g2d.fillRect(50,i*100,700,5);
+        for(Horses h : horses) {
+            g2d.fillRect(50,h.y+20,700,5);
         }//END for
 
 
