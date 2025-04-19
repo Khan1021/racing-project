@@ -15,8 +15,12 @@ public class raceTrack extends JPanel {
     List<Horses> horses = new ArrayList<>(); //initialize the list
 
     //constructor for raceTrack
-    public raceTrack(List<Horses> horses) {
-        this.horses = horses;
+    public raceTrack(List<Horse> logicHorses,List<Color> colours,int raceLength) {
+        horses = new ArrayList<>();
+        for(int i=0;i < logicHorses.size();i++){
+            int y = 90 + i * 100;
+            horses.add(new Horses(logicHorses.get(i),y,colours.get(i),raceLength));
+        }//END for
 
 
     }//END raceTrack constructor
@@ -66,13 +70,15 @@ public class raceTrack extends JPanel {
 
             //drawing finish line on track
             int finishX=750; //750 = 50 (start) + 700 (track length)
-            g2d.setColor(Color.BLACK);
-            g2d.fillRect(finishX,90 - 20, 5, 260); // vertical finish line post)
+            int startY = horses.get(0).y-20;    //dynamic top,based on horse's first lane
+            //dynamic height:finish line will stretch based on the number of lanes
+            int totalHeight = horses.size() * 100;      //assuming each lane takes up 100px
+            g2d.fillRect(finishX,horses.get(0).y-20,5,totalHeight);
 
 
             //drawing flag icon
             g2d.setFont(new Font("Serif",Font.BOLD,24));
-            g2d.drawString("\uD83C\uDFC1",finishX - 5, 80); //draw flag at the top
+            g2d.drawString("\uD83C\uDFC1",finishX - 15, startY-10); //draw flag at the top
 
             if(raceOver && h.getName().equalsIgnoreCase(winnerName)){
                 g2d.setColor(Color.MAGENTA);

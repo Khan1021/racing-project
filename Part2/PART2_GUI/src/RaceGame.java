@@ -16,12 +16,17 @@ public class RaceGame {
     private JComboBox<Integer> laneSelector;
 
 
+    private JScrollPane scrollPane;
+
     private List<Horse> horses = new ArrayList<>();
     private List<JSlider> sliders = new ArrayList<>();
     private List<JComboBox<String>> colourBoxes = new ArrayList<>();
     private List<JComboBox<String>> symbolBoxes = new ArrayList<>();
     private List<JSlider> confidenceSliders = new ArrayList<>();
 
+
+    //class variable for customisable track lane length
+    private JTextField trackLengthField;
 
 
 
@@ -167,19 +172,15 @@ public class RaceGame {
         for(int i=0;i<sliders.size();i++){
             char symbol = ((String) symbolBoxes.get(i).getSelectedItem()).charAt(0);
             String name = "HORSE "+ (i+1);
-            double confidence = sliders.get(i).getValue()/100;
+            double confidence = sliders.get(i).getValue()/100.0;
 
             Horse h = new Horse(symbol,name,confidence);
             horses.add(h);
 
         }//END for
 
-        List<Horses> guiHorses = new ArrayList<>();
-        for(int i=0;i<horses.size();i++){
-            int y= 90 + i* 100;
-            Color color = colorMap.get(colourBoxes.get(i).getSelectedItem());
-            guiHorses.add(new Horses(horses.get(i), y, color, 30));
-        }//END for
+        List<Color> colours = getSelectedColors();
+        trackPanel = new raceTrack(horses,colours,30);
 
         // Remove the racetrack
         if (trackPanel != null) {
@@ -187,13 +188,22 @@ public class RaceGame {
         }//END if
 
 
-        //get selected coat colour
-        List<Color> colours = getSelectedColors();
+
 
         //creating race and track
-        int raceLength = 30;
+        int raceLength;
+
+        try{
+            raceLength = Integer.parseInt(trackLengthField.getText());
+            if(raceLength <= 0) throw new NumberFormatException();
+        }//END try
+        catch(NumberFormatException e){
+            JOptionPane.showMessageDialog(frame,"Invalid track length,using default track length of 30");
+            raceLength = 30;
+
+        }//END catch
         race = new Race(horses, raceLength);
-        trackPanel = new raceTrack(guiHorses);
+        trackPanel = new raceTrack(horses,colours,30);
         frame.add(trackPanel,BorderLayout.CENTER);
         //refresh layout
         frame.revalidate();
@@ -244,14 +254,11 @@ public class RaceGame {
     }//END restartRace
 
 
-
-
-
     //when user selects a number of lanes, it will recreate the horse configuration panels
     private void regenerateHorseSettings() {
-        if (sliderPanel != null) {
-            frame.remove(sliderPanel);
-        }
+        if(scrollPane != null){
+            frame.remove(scrollPane);
+        }//END if
 
         sliderPanel = new JPanel(new GridLayout(0, 1)); // dynamic rows
         sliders.clear();
@@ -259,6 +266,19 @@ public class RaceGame {
         symbolBoxes.clear();
 
         int count = (int) laneSelector.getSelectedItem();
+
+
+        //making customisable track length
+        JPanel trackLengthPanel = new JPanel(new FlowLayout());
+        trackLengthPanel.add(new JLabel("Track Length:"));
+
+        trackLengthField = new JTextField("30",5);
+        trackLengthPanel.add(trackLengthField);
+
+        //adding this to the top of the sliderPanel
+        sliderPanel.add(trackLengthPanel);
+
+        //END customisable track length
 
         for (int i = 0; i < count; i++) {
             JSlider slider = createSlider(50);
@@ -273,9 +293,23 @@ public class RaceGame {
             sliderPanel.add(createHorseSettingsPanel(name, slider, colourBox, symbolBox));
         }
 
-        frame.add(sliderPanel, BorderLayout.NORTH);
+        //wrapping the panel in a scroll pane and add it
+        scrollPane = new JScrollPane(sliderPanel);
+        scrollPane.setPreferredSize(new Dimension(800,300));
+        frame.add(scrollPane,BorderLayout.CENTER);
+
+
+        resizeFrameForLanes();
+
         frame.revalidate();
         frame.repaint();
     }//END generateHorseSettings
 
+
+    //grows the frame
+    private void resizeFrameForLanes(){
+        int numLanes = (int) laneSelector.getSelectedItem();
+        int height = 200 + numLanes * 130;
+        frame.setSize(800,height);
+    }//END resizeFrameForLanes
 }//END class RaceGame
