@@ -15,6 +15,9 @@ public class Race
 
     private List<Horse> horses;
 
+
+    private WeatherCondition condition;
+
     /**
      * Constructor for objects of class Race
      * Initially there are no horses in the lanes
@@ -82,6 +85,7 @@ public class Race
         //so only run if it has not fallen
         if  (!theHorse.hasFallen())
         {
+            double adjustedConfidence = theHorse.getConfidence() +  condition.confidenceModifier;
             //the probability that the horse will move forward depends on the confidence;
             if (Math.random() < theHorse.getConfidence())
             {
