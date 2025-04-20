@@ -154,64 +154,69 @@ public class RaceGame {
     }//END setupButtons
 
     private void startRace() {
-
-        //remove sliders before I add track
-        if(sliderPanel != null){
+        // Remove sliders before we add the track
+        if (sliderPanel != null) {
             frame.remove(sliderPanel);
-        }//END if
+        }
 
-
-        //stopping old timer if it's running
-        if(timer != null && timer.isRunning()) {
+        // Stop any previous race timer
+        if (timer != null && timer.isRunning()) {
             timer.stop();
-        }//END if
-
+        }
 
         horses.clear();
 
-        for(int i=0;i<sliders.size();i++){
+        // Create Horse logic objects
+        for (int i = 0; i < sliders.size(); i++) {
             char symbol = ((String) symbolBoxes.get(i).getSelectedItem()).charAt(0);
-            String name = "HORSE "+ (i+1);
-            double confidence = sliders.get(i).getValue()/100.0;
+            String name = "HORSE " + (i + 1);
+            double confidence = sliders.get(i).getValue() / 100.0;
 
-            Horse h = new Horse(symbol,name,confidence);
+            Horse h = new Horse(symbol, name, confidence);
             horses.add(h);
+        }
 
-        }//END for
-
-        List<Color> colours = getSelectedColors();
-        trackPanel = new raceTrack(horses,colours,30);
-
-        // Remove the racetrack
-        if (trackPanel != null) {
-            frame.remove(trackPanel);
-        }//END if
-
-
-
-
-        //creating race and track
+        // Get track length from user input safely
         int raceLength;
-
-        try{
+        try {
             raceLength = Integer.parseInt(trackLengthField.getText());
-            if(raceLength <= 0) throw new NumberFormatException();
-        }//END try
-        catch(NumberFormatException e){
-            JOptionPane.showMessageDialog(frame,"Invalid track length,using default track length of 30");
+            if (raceLength <= 0) throw new NumberFormatException();
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(frame, "Invalid track length. Using default of 30.");
             raceLength = 30;
+        }
 
-        }//END catch
+        // Make the track width scale based on the race length
+        int baseWidth = 700;
+        int trackWidth = Math.max(300,(int)((raceLength/30.0)*baseWidth));
+
+        // Create race and GUI
         race = new Race(horses, raceLength);
-        trackPanel = new raceTrack(horses,colours,30);
-        frame.add(trackPanel,BorderLayout.CENTER);
-        //refresh layout
+        List<Color> colours = getSelectedColors();
+        trackPanel = new raceTrack(horses, colours, raceLength, trackWidth);
+
+        // Remove old scroll pane if it exists
+        if (scrollPane != null) {
+            frame.remove(scrollPane);
+        }
+
+    // Wrap track panel in a scroll pane
+        scrollPane = new JScrollPane(trackPanel);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+
+        frame.add(scrollPane, BorderLayout.CENTER);
+
+
+
+        // Refresh UI
+        trackPanel.revalidate();
+        scrollPane.revalidate();
         frame.revalidate();
         frame.repaint();
 
 
-
-        // setup timer
+        // Set up the race timer
         timer = new Timer(100, evt -> {
             race.updateRaceState();
             trackPanel.repaint();
@@ -225,11 +230,12 @@ public class RaceGame {
                 SwingUtilities.invokeLater(() -> {
                     JOptionPane.showMessageDialog(frame, winner);
                 });
-            }//END if
+            }
         });
 
         timer.start();
     }//END startRace
+
 
 
 
@@ -306,10 +312,25 @@ public class RaceGame {
     }//END generateHorseSettings
 
 
+    //helper method for trackLengthField
+    private int getTrackLengthFromField() {
+        try{
+            return Integer.parseInt(trackLengthField.getText());
+
+        }//END try
+        catch(NumberFormatException e){
+            return 30;  //default trackLength
+        }//END catch
+    }//END getTrackLengthFromField
+
     //grows the frame
     private void resizeFrameForLanes(){
         int numLanes = (int) laneSelector.getSelectedItem();
         int height = 200 + numLanes * 130;
         frame.setSize(800,height);
     }//END resizeFrameForLanes
+
+
+
+
 }//END class RaceGame

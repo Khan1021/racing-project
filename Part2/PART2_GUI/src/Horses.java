@@ -32,14 +32,16 @@ public class Horses {
 
 
     int raceLength;
+    int trackWidth;
 
     //constructor to set up a horse and race length
-    public Horses(Horse logicHorse,int y, Color color, int raceLength) {
+    public Horses(Horse logicHorse,int y, Color color, int raceLength,int trackWidth) {
         this.logicHorse = logicHorse;
         this.x = 50;
         this.y = y;
         this.color = color;
         this.raceLength = raceLength;
+        this.trackWidth = trackWidth;
     }//END Horses constructor
 
 
@@ -47,13 +49,13 @@ public class Horses {
     public void updatePosition(){
 
         int trackStartX = 50;
-        int trackWidth = 700;
+
 
         //scale position based on how far horse has travelled vs race length
         //ensures, distance travelled == raceLength
         double progress =  (double)logicHorse.getDistanceTravelled()/raceLength;
 
-        this.x = trackStartX + (int)(progress * trackWidth);
+        this.x = trackStartX +(int)(progress * trackWidth);
     }//END updatePosition
 
 
