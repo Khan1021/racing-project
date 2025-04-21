@@ -82,19 +82,32 @@ public class Race
      */
     private void moveHorse(Horse theHorse) {
         if (!theHorse.hasFallen()) {
-            double adjustedConfidence = theHorse.getConfidence() + currentCondition.getConfidenceModifier();
-            adjustedConfidence = Math.max(0.0, Math.min(1.0, adjustedConfidence));
-
-            if (Math.random() < adjustedConfidence * currentCondition.getSpeedModifier()) {
-                theHorse.moveForward();
+            double adjustedConfidence = theHorse.getConfidence();
+            if (currentCondition != null) {
+                adjustedConfidence += currentCondition.getConfidenceModifier();
+                adjustedConfidence = Math.max(0.0, Math.min(1.0, adjustedConfidence));
             }//END if
 
-            double fallChance = 0.1 * adjustedConfidence * adjustedConfidence * currentCondition.getFallRiskModifier();
+            double speedModifier = currentCondition != null ? currentCondition.getSpeedModifier() : 1.0;
+            double moveChance = adjustedConfidence * speedModifier;
+
+            // 🎯 Speed logic: move as many steps as baseSpeed
+            if (Math.random() < moveChance) {
+                for (int i = 0; i < theHorse.getBaseSpeed(); i++) {
+                    theHorse.moveForward();
+                }//END for
+            }//END if
+
+            // 🧊 Fall logic
+            double fallModifier = currentCondition != null ? currentCondition.getFallRiskModifier() : 1.0;
+            double fallChance = 0.1 * adjustedConfidence * adjustedConfidence * fallModifier;
+
             if (Math.random() < fallChance) {
                 theHorse.fall();
             }//END if
-        }//END moveHorse
-    }
+        }//END if
+    }//END moveHorse
+
 
     /**
      * Determines if a horse has won the race

@@ -24,6 +24,8 @@ public class RaceGame {
     private List<JComboBox<String>> symbolBoxes = new ArrayList<>();
     private List<JSlider> confidenceSliders = new ArrayList<>();
 
+    //creating list to store
+    private List<JSlider> speedSliders = new ArrayList<>();
 
     //class variable for customisable track lane length
     private JTextField trackLengthField;
@@ -100,14 +102,20 @@ public class RaceGame {
 
 
     //helper method
-    private JPanel createHorseSettingsPanel(String name, JSlider slider, JComboBox<String> colorBox, JComboBox<String> symbolBox){
-        JPanel panel = new JPanel(new GridLayout(3,2));    //3 settings per horse
+    private JPanel createHorseSettingsPanel(String name, JSlider confidenceSlider, JComboBox<String> colorBox, JComboBox<String> symbolBox,JSlider speedSlider){
+        JPanel panel = new JPanel(new GridLayout(4,2,5,5));    //4 rows,2 columns,5 horizontal gap and 5 vertical gap
+
+
         panel.setBorder(BorderFactory.createTitledBorder(name + " Settings"));     //title border
 
 
+        JPanel paddedPanel = new JPanel(new BorderLayout());
+        paddedPanel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+        paddedPanel.add(panel,BorderLayout.CENTER);
+
         //row 1: confidence slider
         panel.add(new JLabel(name + " Confidence"));
-        panel.add(slider);
+        panel.add(confidenceSlider);
 
         //row 2: coat colour selector
         panel.add(new JLabel(name + " Coat colour"));
@@ -118,7 +126,12 @@ public class RaceGame {
         panel.add(new JLabel(name + " Symbol"));
         panel.add(symbolBox);
 
-        return panel;
+
+        //row 4: speed selector
+        panel.add(new JLabel(name+ "speed"));
+        panel.add(speedSlider);
+
+        return paddedPanel;
     }//END createHorseSettingsPanel
 
 
@@ -188,6 +201,8 @@ public class RaceGame {
             double confidence = sliders.get(i).getValue() / 100.0;
 
             Horse h = new Horse(symbol, name, confidence);
+            h.setBaseSpeed(speedSliders.get(i).getValue());
+
             horses.add(h);
         }
 
@@ -286,10 +301,16 @@ public class RaceGame {
             frame.remove(scrollPane);
         }//END if
 
-        sliderPanel = new JPanel(new GridLayout(0, 1)); // dynamic rows
+
+        sliderPanel = new JPanel();
+        sliderPanel.setLayout(new BoxLayout(sliderPanel,BoxLayout.Y_AXIS));
+        sliderPanel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+
         sliders.clear();
         colourBoxes.clear();
         symbolBoxes.clear();
+        speedSliders.clear();
+
 
         int count = (int) laneSelector.getSelectedItem();
 
@@ -307,17 +328,28 @@ public class RaceGame {
         //END customisable track length
 
         for (int i = 0; i < count; i++) {
-            JSlider slider = createSlider(50);
+            String name = "Horse " + (i + 1);
+
+            //JSliders and dropdowns
+            JSlider confidenceSlider = createSlider(50);
+            JSlider speedSlider = new JSlider(1,10,5);
+
+            speedSlider.setMajorTickSpacing(1);
+            speedSlider.setPaintTicks(true);
+            speedSlider.setPaintLabels(true);
+
+
             JComboBox<String> colourBox = new JComboBox<>(colourNames);
             JComboBox<String> symbolBox = new JComboBox<>(horseSymbols);
 
-            sliders.add(slider);
+            sliders.add(confidenceSlider);
             colourBoxes.add(colourBox);
             symbolBoxes.add(symbolBox);
+            speedSliders.add(speedSlider);
 
-            String name = "HORSE " + (i + 1);
-            sliderPanel.add(createHorseSettingsPanel(name, slider, colourBox, symbolBox));
-        }
+            //add full horse settings panel here
+            sliderPanel.add(createHorseSettingsPanel(name,confidenceSlider,colourBox,symbolBox,speedSlider));
+        }//regenerateHorseSettings
 
         //wrapping the panel in a scroll pane and add it
         scrollPane = new JScrollPane(sliderPanel);
@@ -326,7 +358,6 @@ public class RaceGame {
 
 
         resizeFrameForLanes();
-
         frame.revalidate();
         frame.repaint();
     }//END generateHorseSettings

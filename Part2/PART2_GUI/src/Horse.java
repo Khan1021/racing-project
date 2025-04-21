@@ -8,7 +8,7 @@
  *  - does everything BUT draw the visuals
  *
  * @author (Zaynab Khan 230325337)
- * @version (18/04)
+ * @version (21/04)
  */
 public class Horse
 {
@@ -28,6 +28,11 @@ public class Horse
 
     //boolean flag to indicate whether the horse has fallen
     private boolean hasFallen;
+
+
+    //default speed of horses
+    private int baseSpeed = 1;
+
 
 
 
@@ -112,12 +117,23 @@ public class Horse
 
     }//END setConfidence
 
+
+    //Speed getters and setters
+    public int getBaseSpeed(){
+        return baseSpeed;
+    }//END getBaseSpeed
+
+    public void setBaseSpeed(int speed){
+        this.baseSpeed = speed;
+    }//END setBaseSpeed
+
+
+
+    //symbol getters and setters
     public void setSymbol(char newSymbol)
     {
         horseSymbol =newSymbol;
     }//END setSymbol
-
-
 
     //method for horse falling logic, when horse falls then symbol goes to 'x'
     public char getDisplaySymbol(){
