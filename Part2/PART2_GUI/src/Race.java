@@ -16,7 +16,7 @@ public class Race
     private List<Horse> horses;
 
 
-    private WeatherCondition condition;
+    private WeatherCondition currentCondition;
 
     /**
      * Constructor for objects of class Race
@@ -24,11 +24,12 @@ public class Race
      *
      * @param distance the length of the racetrack (in metres/yards...)
      */
-    public Race(List<Horse> horses,int distance)
+    public Race(List<Horse> horses,int distance,WeatherCondition condition)
     {
         // initialise  variables
         this.horses = horses;
         this.raceLength = distance;
+        this.currentCondition = condition;
     }//END Race constructor
 
     /**
@@ -79,29 +80,21 @@ public class Race
      *
      * @param theHorse the horse to be moved
      */
-    private void moveHorse(Horse theHorse)
-    {
-        //if the horse has fallen it cannot move,
-        //so only run if it has not fallen
-        if  (!theHorse.hasFallen())
-        {
-            double adjustedConfidence = theHorse.getConfidence() +  condition.confidenceModifier;
-            //the probability that the horse will move forward depends on the confidence;
-            if (Math.random() < theHorse.getConfidence())
-            {
+    private void moveHorse(Horse theHorse) {
+        if (!theHorse.hasFallen()) {
+            double adjustedConfidence = theHorse.getConfidence() + currentCondition.getConfidenceModifier();
+            adjustedConfidence = Math.max(0.0, Math.min(1.0, adjustedConfidence));
+
+            if (Math.random() < adjustedConfidence * currentCondition.getSpeedModifier()) {
                 theHorse.moveForward();
             }//END if
 
-            //the probability that the horse will fall is very small (max is 0.1)
-            //but will also will depends exponentially on confidence
-            //so if you double the confidence, the probability that it will fall is *2
-            if (Math.random() < (0.1*theHorse.getConfidence()*theHorse.getConfidence()))
-            {
+            double fallChance = 0.1 * adjustedConfidence * adjustedConfidence * currentCondition.getFallRiskModifier();
+            if (Math.random() < fallChance) {
                 theHorse.fall();
             }//END if
-        }//END if
-
-    }//END moveHorse
+        }//END moveHorse
+    }
 
     /**
      * Determines if a horse has won the race

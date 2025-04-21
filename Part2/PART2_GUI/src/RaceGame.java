@@ -29,6 +29,10 @@ public class RaceGame {
     private JTextField trackLengthField;
 
 
+    //weather dropdown box
+    private JComboBox<String> weatherSelector;
+    private WeatherCondition currentWeather;
+
 
     //race timer
     private Timer timer;
@@ -75,6 +79,12 @@ public class RaceGame {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
 
+
+        //weather dropdown box
+        String[] weatherOptions = {"Normal","muddy","dry","icy"};
+        weatherSelector = new JComboBox<>(weatherOptions);
+        weatherSelector.setSelectedItem("Normal");
+        frame.add(weatherSelector,BorderLayout.NORTH);
 
         //setting up lane selector
         laneSelector = new JComboBox<>(new Integer[]{1,2,3,4,5,6});
@@ -166,6 +176,11 @@ public class RaceGame {
 
         horses.clear();
 
+        //get the selected weather
+        String selectedWeather = (String) weatherSelector.getSelectedItem();
+        currentWeather = WeatherCondition.getWeatherCondition(selectedWeather);
+
+
         // Create Horse logic objects
         for (int i = 0; i < sliders.size(); i++) {
             char symbol = ((String) symbolBoxes.get(i).getSelectedItem()).charAt(0);
@@ -191,7 +206,12 @@ public class RaceGame {
         int trackWidth = Math.max(300,(int)((raceLength/30.0)*baseWidth));
 
         // Create race and GUI
-        race = new Race(horses, raceLength);
+
+        //weather
+        WeatherCondition selectedCondition = WeatherCondition.getWeatherCondition("muddy");
+        race = new Race(horses, raceLength,selectedCondition);
+
+
         List<Color> colours = getSelectedColors();
         trackPanel = new raceTrack(horses, colours, raceLength, trackWidth);
 
