@@ -187,6 +187,10 @@ public class RaceGame {
             String baseName = fileName.substring(0, fileName.lastIndexOf(".")); // e.g., "Morgan"
             ImageIcon fallen = loadHorseImage(baseName + "Fallen.png");
 
+            if (fallen == null) {
+                throw new RuntimeException("Missing fallen image for: " + baseName + "Fallen.png");
+            }
+
             // Create horse with both images
             Horse h = new Horse(upright, fallen, name, confidence);
             h.setBaseSpeed(speedSliders.get(i).getValue());
@@ -260,7 +264,6 @@ public class RaceGame {
 
         timer.start();
 
-        horses.get(0).fall();
 
     }//END startRace
 
@@ -358,7 +361,11 @@ public class RaceGame {
 
 
             for(String imageName: horseImageNames){
-                imageBox.addItem(loadHorseImage(imageName));
+                ImageIcon icon = loadHorseImage(imageName);
+                if (icon != null) {
+                    icon.setDescription(imageName); // <-- you missed this before
+                    imageBox.addItem(icon);
+                }
             }//END for
 
             imageSelectors.add(imageBox);
