@@ -17,6 +17,7 @@ This handles:
 
 import javax.swing.*;
 import java.awt.*;
+import javax.swing.ImageIcon;
 
 public class Horses {
 
@@ -24,8 +25,6 @@ public class Horses {
     int x;
     int y;
 
-    //colour of horse
-    Color color;
 
     //logic horse reference (stores name, confidence, etc.)
     Horse logicHorse;
@@ -34,12 +33,13 @@ public class Horses {
     int raceLength;
     int trackWidth;
 
+
     //constructor to set up a horse and race length
-    public Horses(Horse logicHorse,int y, Color color, int raceLength,int trackWidth) {
+    public Horses(Horse logicHorse,int y,  int raceLength,int trackWidth) {
         this.logicHorse = logicHorse;
         this.x = 50;
         this.y = y;
-        this.color = color;
+
         this.raceLength = raceLength;
         this.trackWidth = trackWidth;
     }//END Horses constructor
@@ -64,10 +64,10 @@ public class Horses {
         return logicHorse.getName();
     }//END getName
 
-    //if horse falls show 'x' icon
-    public char getSymbol(){
-        return logicHorse.getDisplaySymbol();
-    }//END getSymbol
+
+    public ImageIcon getHorseImage(){
+        return logicHorse.getCurrentImage();
+    }//END getHorseImage
 
 
 }//END Horses

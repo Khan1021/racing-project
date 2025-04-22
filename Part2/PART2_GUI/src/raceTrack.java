@@ -14,14 +14,21 @@ public class raceTrack extends JPanel {
     private int raceLength;
     List<Horses> horses = new ArrayList<>(); //initialize the list
 
+    private String weatherType;
+
+    private ImageIcon horseImage;
+
     //constructor for raceTrack
-    public raceTrack(List<Horse> logicHorses,List<Color> colours,int raceLength, int maxTrackWidth) {
+    public raceTrack(List<Horse> logicHorses,int raceLength, int maxTrackWidth,String weatherType ) {
         this.raceLength = raceLength;
         horses = new ArrayList<>();
-        for(int i=0;i < logicHorses.size();i++){
+        this.weatherType = weatherType;
+        for (int i = 0; i < logicHorses.size(); i++) {
             int y = 90 + i * 100;
-            horses.add(new Horses(logicHorses.get(i),y,colours.get(i),raceLength,maxTrackWidth));
+            horses.add(new Horses(logicHorses.get(i), y, raceLength, maxTrackWidth));
         }//END for
+
+
 
         this.setPreferredSize(new Dimension(60+ maxTrackWidth+100,horses.size() * 100 + 100));
 
@@ -55,14 +62,27 @@ public class raceTrack extends JPanel {
         g2d.setFont(new Font("Serif", Font.BOLD, 24));
         g2d.drawString("\uD83C\uDFC1", finishX - 15, startY - 10);
 
+        //weather label
+        g2d.setColor(Color.BLACK);
+        g2d.setFont(new Font("SansSerif",Font.BOLD,20));
+        g2d.drawString("Weather: "+ weatherType,50,40);
+
+
+        //weather background
+        switch(weatherType.toLowerCase()){
+            case "muddy": setBackground(new Color(139,69,19)); break;   //changing background colour to brown
+            case "dry": setBackground(new Color(222,184,135));  break;
+            case "icy": setBackground(Color.CYAN); break;      //blue
+            default:    setBackground(Color.GREEN); break;  //normal grass
+        }//END switch
+
         // Draw horses
         for (Horses h : horses) {
             h.updatePosition();
 
-            // Symbol
-            g2d.setColor(h.color);
-            g2d.setFont(new Font("Serif", Font.BOLD, 40));
-            g2d.drawString(String.valueOf(h.getSymbol()), h.x, h.y);
+           //horse image
+            Image img = h.getHorseImage().getImage();
+            g2d.drawImage(img, h.x, h.y - 40, 60, 60, null);
 
             // Name
             g2d.setFont(new Font("SansSerif", Font.PLAIN, 12));

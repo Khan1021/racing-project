@@ -20,8 +20,12 @@ public class RaceGame {
 
     private List<Horse> horses = new ArrayList<>();
     private List<JSlider> sliders = new ArrayList<>();
-    private List<JComboBox<String>> colourBoxes = new ArrayList<>();
-    private List<JComboBox<String>> symbolBoxes = new ArrayList<>();
+
+    private List<JComboBox<ImageIcon>> imageSelectors = new ArrayList<>();
+
+    private ImageIcon horseImage;
+
+
     private List<JSlider> confidenceSliders = new ArrayList<>();
 
     //creating list to store
@@ -44,24 +48,16 @@ public class RaceGame {
     private JPanel sliderPanel; //store reference to panel so we can remove later
     //END slider
 
-    //defining an array of unicode character for horses
-    private final String[] horseSymbols = {"♞", "♘", "★", "◆", "◉", "✿"};
+
+    //horse images
+    private final String[] horseImageNames={
+            "Morgan.png",
+            "americanPaint.png",
+            "arabian.png",
+            "unicorn.png"
+    };
 
 
-    //add JComboBoxes for horse colour and horseSymbol
-    private final String[] colourNames = {"Pink","Blue","Orange","Red","Cyan"};
-    private final Map<String, Color> colorMap = Map.of(
-            "Pink", Color.PINK,
-            "Blue", Color.BLUE,
-            "Orange", Color.ORANGE,
-            "Cyan", Color.CYAN,
-            "Red", Color.RED,
-            "Black", Color.BLACK,
-            "Gray", Color.GRAY
-    );
-
-
-    //END JComboBox
 
     public RaceGame() {
         setupFrame();
@@ -102,37 +98,26 @@ public class RaceGame {
 
 
     //helper method
-    private JPanel createHorseSettingsPanel(String name, JSlider confidenceSlider, JComboBox<String> colorBox, JComboBox<String> symbolBox,JSlider speedSlider){
-        JPanel panel = new JPanel(new GridLayout(4,2,5,5));    //4 rows,2 columns,5 horizontal gap and 5 vertical gap
-
-
-        panel.setBorder(BorderFactory.createTitledBorder(name + " Settings"));     //title border
-
+    private JPanel createHorseSettingsPanel(String name, JSlider confidenceSlider, JComboBox<ImageIcon> imageBox, JSlider speedSlider){
+        JPanel panel = new JPanel(new GridLayout(3,2,5,5)); // now only 3 rows
+        panel.setBorder(BorderFactory.createTitledBorder(name + " Settings"));
 
         JPanel paddedPanel = new JPanel(new BorderLayout());
         paddedPanel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
-        paddedPanel.add(panel,BorderLayout.CENTER);
+        paddedPanel.add(panel, BorderLayout.CENTER);
 
-        //row 1: confidence slider
         panel.add(new JLabel(name + " Confidence"));
         panel.add(confidenceSlider);
 
-        //row 2: coat colour selector
-        panel.add(new JLabel(name + " Coat colour"));
-        panel.add(colorBox);
+        panel.add(new JLabel(name + " Image"));
+        panel.add(imageBox);
 
-
-        //row 3: Symbol selector
-        panel.add(new JLabel(name + " Symbol"));
-        panel.add(symbolBox);
-
-
-        //row 4: speed selector
-        panel.add(new JLabel(name+ "speed"));
+        panel.add(new JLabel(name + " Speed"));
         panel.add(speedSlider);
 
         return paddedPanel;
-    }//END createHorseSettingsPanel
+    }
+
 
 
 
@@ -144,21 +129,6 @@ public class RaceGame {
         slider.setPaintLabels(true);
         return slider;
     }//END createSlider
-
-
-
-
-
-    private List<Color> getSelectedColors(){
-        List<Color> colours = new ArrayList<>();
-
-        for (JComboBox<String> box : colourBoxes){
-            colours.add(colorMap.get(box.getSelectedItem()));
-        }//END for each
-        return colours;
-    }//END getSelectedColours
-
-
 
 
 
@@ -189,22 +159,43 @@ public class RaceGame {
 
         horses.clear();
 
+
         //get the selected weather
         String selectedWeather = (String) weatherSelector.getSelectedItem();
         currentWeather = WeatherCondition.getWeatherCondition(selectedWeather);
 
+        List<ImageIcon> selectedImages = new ArrayList<>();
+        for(JComboBox<ImageIcon> box: imageSelectors){
+            selectedImages.add((ImageIcon) box.getSelectedItem());
+        }//END for
+
+        List<ImageIcon> fallenImages = new ArrayList<>();
+
+
+
 
         // Create Horse logic objects
+        // Create Horse logic objects
         for (int i = 0; i < sliders.size(); i++) {
-            char symbol = ((String) symbolBoxes.get(i).getSelectedItem()).charAt(0);
             String name = "HORSE " + (i + 1);
             double confidence = sliders.get(i).getValue() / 100.0;
 
-            Horse h = new Horse(symbol, name, confidence);
+            ImageIcon upright = (ImageIcon) imageSelectors.get(i).getSelectedItem();
+
+            // FALLEN image logic
+            String fileName = upright.getDescription(); // e.g., "Morgan.png"
+            String baseName = fileName.substring(0, fileName.lastIndexOf(".")); // e.g., "Morgan"
+            ImageIcon fallen = loadHorseImage(baseName + "Fallen.png");
+
+            // Create horse with both images
+            Horse h = new Horse(upright, fallen, name, confidence);
             h.setBaseSpeed(speedSliders.get(i).getValue());
 
             horses.add(h);
-        }
+        }//END for
+
+
+
 
         // Get track length from user input safely
         int raceLength;
@@ -227,8 +218,7 @@ public class RaceGame {
         race = new Race(horses, raceLength,selectedCondition);
 
 
-        List<Color> colours = getSelectedColors();
-        trackPanel = new raceTrack(horses, colours, raceLength, trackWidth);
+        trackPanel = new raceTrack(horses, raceLength, trackWidth,currentWeather.getType());
 
         // Remove old scroll pane if it exists
         if (scrollPane != null) {
@@ -269,6 +259,9 @@ public class RaceGame {
         });
 
         timer.start();
+
+        horses.get(0).fall();
+
     }//END startRace
 
 
@@ -307,8 +300,6 @@ public class RaceGame {
         sliderPanel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
 
         sliders.clear();
-        colourBoxes.clear();
-        symbolBoxes.clear();
         speedSliders.clear();
 
 
@@ -327,29 +318,62 @@ public class RaceGame {
 
         //END customisable track length
 
+
+        imageSelectors.clear();
+
+
         for (int i = 0; i < count; i++) {
             String name = "Horse " + (i + 1);
 
-            //JSliders and dropdowns
             JSlider confidenceSlider = createSlider(50);
-            JSlider speedSlider = new JSlider(1,10,5);
-
+            JSlider speedSlider = new JSlider(1, 10, 5);
             speedSlider.setMajorTickSpacing(1);
             speedSlider.setPaintTicks(true);
             speedSlider.setPaintLabels(true);
 
+            // 👇 NEW: Make a NEW combo box for EACH horse
+            JComboBox<ImageIcon> imageBox = new JComboBox<>();
 
-            JComboBox<String> colourBox = new JComboBox<>(colourNames);
-            JComboBox<String> symbolBox = new JComboBox<>(horseSymbols);
+            ImageIcon morgan = loadHorseImage("Morgan.png");
+            if(morgan != null){
+                morgan.setDescription("Morgan.png");
+                imageBox.addItem(morgan);
+            }//END if
+
+            ImageIcon paint = loadHorseImage("americanPaint.png");
+            if(paint != null){
+                paint.setDescription("americanPaint.png");
+            }//END if
+
+            ImageIcon arabian = loadHorseImage("arabian.png");
+            if(arabian != null){
+                arabian.setDescription("arabian.png");
+            }//END if
+
+
+            ImageIcon unicorn = loadHorseImage("unicorn.png");
+            if(unicorn != null){
+                unicorn.setDescription("unicorn.png");
+            }//END if
+
+
+            for(String imageName: horseImageNames){
+                imageBox.addItem(loadHorseImage(imageName));
+            }//END for
+
+            imageSelectors.add(imageBox);
+
+
+
 
             sliders.add(confidenceSlider);
-            colourBoxes.add(colourBox);
-            symbolBoxes.add(symbolBox);
             speedSliders.add(speedSlider);
 
-            //add full horse settings panel here
-            sliderPanel.add(createHorseSettingsPanel(name,confidenceSlider,colourBox,symbolBox,speedSlider));
-        }//regenerateHorseSettings
+            sliderPanel.add(createHorseSettingsPanel(name, confidenceSlider, imageBox, speedSlider));
+        }//END for
+
+
+
 
         //wrapping the panel in a scroll pane and add it
         scrollPane = new JScrollPane(sliderPanel);
@@ -362,6 +386,21 @@ public class RaceGame {
         frame.repaint();
     }//END generateHorseSettings
 
+
+    //helper method for horse images
+    private ImageIcon loadHorseImage(String fileName) {
+        try {
+            java.net.URL imageURL = getClass().getClassLoader().getResource("horsesGUI/" + fileName);
+            if (imageURL == null) throw new RuntimeException("Image not found");
+
+            ImageIcon icon = new ImageIcon(imageURL);
+            icon.setDescription(fileName); // 💥 THIS is how we tag it for later
+            return icon;
+        } catch (Exception e) {
+            System.out.println("Could not load image: " + fileName);
+            return null;
+        }
+    }//END loadHorseImage
 
     //helper method for trackLengthField
     private int getTrackLengthFromField() {
@@ -382,6 +421,10 @@ public class RaceGame {
     }//END resizeFrameForLanes
 
 
+
+    public ImageIcon getHorseImage(){
+        return horseImage;
+    }//END getHorseImage
 
 
 }//END class RaceGame

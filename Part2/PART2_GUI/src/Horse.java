@@ -10,11 +10,16 @@
  * @author (Zaynab Khan 230325337)
  * @version (21/04)
  */
+
+
+import javax.swing.ImageIcon;
+
 public class Horse
 {
     //Fields of class Horse
-    //a single unicode character that represents the horse
-    private char horseSymbol;
+    //a  character that represents the horse
+    private ImageIcon horseImage;
+    private ImageIcon fallenImage;
 
     //String of horse name
     private String horseName;
@@ -38,13 +43,15 @@ public class Horse
 
 
 
+
     //Constructor of class Horse
     /**
      * Constructor for objects of class Horse
      */
-    public Horse(char horseSymbol, String horseName, double horseConfidence)
+    public Horse(ImageIcon horseImage,ImageIcon fallenImage, String horseName, double horseConfidence)
     {
-        this.horseSymbol = horseSymbol;
+        this.horseImage = horseImage;
+        this.fallenImage = fallenImage;
         this.horseName = horseName;
         this.horseConfidence = horseConfidence;
         this.hasFallen =false;
@@ -84,10 +91,7 @@ public class Horse
         return horseName;
     }//END getName
 
-    public char getSymbol()
-    {
-        return horseSymbol;
-    }//END getSymbol
+
 
     public void goBackToStart()
     {
@@ -130,19 +134,19 @@ public class Horse
 
 
     //symbol getters and setters
-    public void setSymbol(char newSymbol)
-    {
-        horseSymbol =newSymbol;
-    }//END setSymbol
 
     //method for horse falling logic, when horse falls then symbol goes to 'x'
-    public char getDisplaySymbol(){
+    public ImageIcon getHorseImage(){
         if(hasFallen){
-            return 'x';
+            return horseImage;
         }
         else{
-            return horseSymbol;
+            return horseImage;
         }
     }//END getDisplaySymbol
+
+    public ImageIcon getCurrentImage(){
+        return hasFallen ? fallenImage : horseImage;
+    }//END getCurrentImage
 }//END Horse class
 
