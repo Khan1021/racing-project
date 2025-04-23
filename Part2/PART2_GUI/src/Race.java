@@ -48,6 +48,11 @@ public class Race
      */
     public void startRace()
     {
+        long now = System.currentTimeMillis();
+        for(Horse h: horses){
+            h.setStartTime(now);
+        }//END for
+
         //declare a local variable to tell us when the race is finished
         boolean finished = false;
 
@@ -62,8 +67,12 @@ public class Race
     public void updateRaceState() {
        for(Horse h : horses){
            moveHorse(h);
-       }//END for
 
+                //record endTime if horse has just finished
+                if(h.getDistanceTravelled() >= raceLength && h.getEndTime() ==0){
+                    h.setEndTime(System.currentTimeMillis());
+                }//END if
+       }//END for
 
         //debugging
         for(Horse h: horses){
@@ -91,14 +100,14 @@ public class Race
             double speedModifier = currentCondition != null ? currentCondition.getSpeedModifier() : 1.0;
             double moveChance = adjustedConfidence * speedModifier;
 
-            // 🎯 Speed logic: move as many steps as baseSpeed
+            // Speed logic: move as many steps as baseSpeed
             if (Math.random() < moveChance) {
                 for (int i = 0; i < theHorse.getBaseSpeed(); i++) {
                     theHorse.moveForward();
                 }//END for
             }//END if
 
-            // 🧊 Fall logic
+            // Fall logic
             double fallModifier = currentCondition != null ? currentCondition.getFallRiskModifier() : 1.0;
             double fallChance = 0.1 * adjustedConfidence * adjustedConfidence * fallModifier;
 
@@ -120,19 +129,12 @@ public class Race
         if (theHorse.getDistanceTravelled() == raceLength)
         {
             return true;
-        }
+        }//END if
         else
         {
             return false;
-        }
-    }
-
-
-
-
-
-
-
+        }//END else
+    }//END raceWonBy
 
 
 
@@ -186,6 +188,41 @@ public class Race
     public int getRaceLength(){
         return raceLength;
     }//END getRaceLength
+
+
+
+    public String getPerformanceMetrics(){
+        StringBuilder report = new StringBuilder("\uD83C\uDFC1 Race performance metrics:\n");
+
+
+        for(Horse h: horses){
+            report.append(h.getName()).append("\n");
+
+            //time taken to complete race in seconds
+            long start = h.getStartTime();
+            long end = h.getEndTime();
+            if(end >0 && start>0){
+                long durationMillis = end - start;
+                double durationSeconds = durationMillis / 1000.0;
+
+                double averageSpeed = h.getDistanceTravelled() / durationSeconds;
+
+                report.append("Time: ").append(String.format("%.2f", durationSeconds)).append(" sec\n");
+                report.append("Avg Speed: ").append(String.format("%.2f",averageSpeed)).append(" tiles/second\n");
+            }//END if
+            else{
+                report.append("Time: N/A (Did not finish)\n");
+                report.append("Average Speed: N/A\n");
+            }//END else
+
+
+            //fall count
+            report.append(" Falls: ").append(h.getFallCount()).append("\n\n");
+        }//END for
+
+
+        return report.toString();
+    }//END getPerformanceMetrics
 }//END Race class
 
 

@@ -159,49 +159,36 @@ public class RaceGame {
 
         horses.clear();
 
-
-        //get the selected weather
+        // Get selected weather
         String selectedWeather = (String) weatherSelector.getSelectedItem();
         currentWeather = WeatherCondition.getWeatherCondition(selectedWeather);
 
         List<ImageIcon> selectedImages = new ArrayList<>();
-        for(JComboBox<ImageIcon> box: imageSelectors){
+        for (JComboBox<ImageIcon> box : imageSelectors) {
             selectedImages.add((ImageIcon) box.getSelectedItem());
-        }//END for
+        }
 
-        List<ImageIcon> fallenImages = new ArrayList<>();
-
-
-
-
-        // Create Horse logic objects
-        // Create Horse logic objects
+        // Create Horse objects
         for (int i = 0; i < sliders.size(); i++) {
             String name = "HORSE " + (i + 1);
             double confidence = sliders.get(i).getValue() / 100.0;
 
             ImageIcon upright = (ImageIcon) imageSelectors.get(i).getSelectedItem();
-
-            // FALLEN image logic
-            String fileName = upright.getDescription(); // e.g., "Morgan.png"
-            String baseName = fileName.substring(0, fileName.lastIndexOf(".")); // e.g., "Morgan"
+            String fileName = upright.getDescription();
+            String baseName = fileName.substring(0, fileName.lastIndexOf("."));
             ImageIcon fallen = loadHorseImage(baseName + "Fallen.png");
 
             if (fallen == null) {
                 throw new RuntimeException("Missing fallen image for: " + baseName + "Fallen.png");
             }
 
-            // Create horse with both images
             Horse h = new Horse(upright, fallen, name, confidence);
             h.setBaseSpeed(speedSliders.get(i).getValue());
 
             horses.add(h);
-        }//END for
+        }
 
-
-
-
-        // Get track length from user input safely
+        // Get track length safely
         int raceLength;
         try {
             raceLength = Integer.parseInt(trackLengthField.getText());
@@ -211,39 +198,27 @@ public class RaceGame {
             raceLength = 30;
         }
 
-        // Make the track width scale based on the race length
         int baseWidth = 700;
-        int trackWidth = Math.max(300,(int)((raceLength/30.0)*baseWidth));
+        int trackWidth = Math.max(300, (int) ((raceLength / 30.0) * baseWidth));
 
-        // Create race and GUI
-
-        //weather
         WeatherCondition selectedCondition = WeatherCondition.getWeatherCondition("muddy");
-        race = new Race(horses, raceLength,selectedCondition);
+        race = new Race(horses, raceLength, selectedCondition);
 
+        trackPanel = new raceTrack(horses, raceLength, trackWidth, currentWeather.getType());
 
-        trackPanel = new raceTrack(horses, raceLength, trackWidth,currentWeather.getType());
-
-        // Remove old scroll pane if it exists
         if (scrollPane != null) {
             frame.remove(scrollPane);
         }
 
-    // Wrap track panel in a scroll pane
         scrollPane = new JScrollPane(trackPanel);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
-
         frame.add(scrollPane, BorderLayout.CENTER);
 
-
-
-        // Refresh UI
         trackPanel.revalidate();
         scrollPane.revalidate();
         frame.revalidate();
         frame.repaint();
-
 
         // Set up the race timer
         timer = new Timer(100, evt -> {
@@ -258,14 +233,28 @@ public class RaceGame {
 
                 SwingUtilities.invokeLater(() -> {
                     JOptionPane.showMessageDialog(frame, winner);
+
+                    // Show performance metrics
+                    String metrics = race.getPerformanceMetrics();
+                    JTextArea metricsArea = new JTextArea(metrics);
+                    metricsArea.setEditable(false);
+                    metricsArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
+                    JScrollPane metricsScroll = new JScrollPane(metricsArea);
+                    metricsScroll.setPreferredSize(new Dimension(400, 200));
+
+                    JOptionPane.showMessageDialog(
+                            frame,
+                            metricsScroll,
+                            "Race Summary",
+                            JOptionPane.INFORMATION_MESSAGE
+                    );
                 });
             }
         });
 
-        timer.start();
-
-
+        timer.start(); // ✅ Start the race after setup
     }//END startRace
+
 
 
 

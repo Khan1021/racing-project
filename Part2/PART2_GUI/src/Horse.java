@@ -180,6 +180,6 @@ public class Horse
         return fallCount;
     }//END getFallCount
 
-    
+
 }//END Horse class
 
