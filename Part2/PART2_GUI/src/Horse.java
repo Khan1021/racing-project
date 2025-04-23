@@ -41,6 +41,10 @@ public class Horse
 
 
 
+    //statistics tracking fields
+    private long startTime;
+    private long endTime;
+    private int fallCount;
 
 
 
@@ -73,7 +77,8 @@ public class Horse
         */
     public void fall()
     {
-        hasFallen = true;
+        this.hasFallen = true;
+        this.fallCount++;
     }//END fall
 
     public double getConfidence()
@@ -148,5 +153,33 @@ public class Horse
     public ImageIcon getCurrentImage(){
         return hasFallen ? fallenImage : horseImage;
     }//END getCurrentImage
+
+
+
+
+    //statistics methods
+    //setter methods
+    public void setStartTime(long time){
+        this.startTime = time;
+    }//END setStartTime
+
+    public void setEndTime(long time){
+        this.endTime = time;
+    }//END setEndTime
+
+    //getter methods
+    public long getStartTime(){
+        return startTime;
+    }//END getStartTime
+
+    public long getEndTime(){
+        return endTime;
+    }//END getEndTime
+
+    public int getFallCount(){
+        return fallCount;
+    }//END getFallCount
+
+    
 }//END Horse class
 
