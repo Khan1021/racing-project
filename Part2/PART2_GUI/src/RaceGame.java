@@ -142,11 +142,11 @@ public class RaceGame {
 
         frame.add(buttonPanel, BorderLayout.SOUTH);
 
-        startButton.addActionListener(e -> startRace());
+        startButton.addActionListener(e -> startRaceGUI());
         restartButton.addActionListener(e -> restartRace());
     }//END setupButtons
 
-    private void startRace() {
+    private void startRaceGUI() {
         // Remove sliders before we add the track
         if (sliderPanel != null) {
             frame.remove(sliderPanel);
