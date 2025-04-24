@@ -34,12 +34,17 @@ public class Horse
      */
     public Horse(char horseSymbol, String horseName, double horseConfidence)
     {
+        if(horseConfidence < 0 || horseConfidence > 1){
+            throw new IllegalArgumentException("Horse Confidence should be between 0 and 1");
+        }//END if
+
         this.horseSymbol = horseSymbol;
         this.horseName = horseName;
         this.horseConfidence = horseConfidence;
         this.hasFallen =false;
         this.distanceTravelled = 0;
     }//END constructor Horse
+
 
 
 
@@ -95,17 +100,7 @@ public class Horse
         distanceTravelled++;
     }//END moveForward
 
-    public void setConfidence(double newConfidence)
-    {
 
-            if (newConfidence < 0 || newConfidence > 1) {
-                System.out.println("Confidence must be between 0 and 1.");
-                return;
-            }
-            horseConfidence = newConfidence;
-
-
-    }//END setConfidence
 
     public void setSymbol(char newSymbol)
     {
