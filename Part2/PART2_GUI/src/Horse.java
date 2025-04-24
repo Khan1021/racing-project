@@ -1,5 +1,5 @@
 
-/**
+/*
  * Write a description of class Horse here.
  * this is my backend of the race horse:
  *  - handles horse logic

@@ -16,7 +16,7 @@ public class Race
     private List<Horse> horses;
 
 
-    private WeatherCondition currentCondition;
+    private Weather currentCondition;
 
     /**
      * Constructor for objects of class Race
@@ -24,7 +24,7 @@ public class Race
      *
      * @param distance the length of the racetrack (in metres/yards...)
      */
-    public Race(List<Horse> horses,int distance,WeatherCondition condition)
+    public Race(List<Horse> horses,int distance,Weather condition)
     {
         // initialise  variables
         this.horses = horses;
@@ -32,7 +32,7 @@ public class Race
         this.currentCondition = condition;
     }//END Race constructor
 
-    /**
+    /*
      * Adds a horse to the race in a given lane
      *
      * @param theHorse the horse to be added to the race
@@ -40,7 +40,7 @@ public class Race
      */
 
 
-    /**
+    /*
      * Start the race
      * The horse are brought to the start and
      * then repeatedly moved forward until the
@@ -82,7 +82,7 @@ public class Race
 
 
 
-    /**
+    /*
      * Randomly make a horse move forward or fall depending
      * on its confidence rating
      * A fallen horse cannot move
@@ -118,7 +118,7 @@ public class Race
     }//END moveHorse
 
 
-    /**
+    /*
      * Determines if a horse has won the race
      *
      * @param theHorse The horse we are testing

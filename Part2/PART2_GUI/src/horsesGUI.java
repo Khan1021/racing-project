@@ -19,7 +19,7 @@ import javax.swing.*;
 import java.awt.*;
 import javax.swing.ImageIcon;
 
-public class Horses {
+public class horsesGUI {
 
     //position of horse on screen
     int x;
@@ -35,7 +35,7 @@ public class Horses {
 
 
     //constructor to set up a horse and race length
-    public Horses(Horse logicHorse,int y,  int raceLength,int trackWidth) {
+    public horsesGUI(Horse logicHorse,int y,  int raceLength,int trackWidth) {
         this.logicHorse = logicHorse;
         this.x = 50;
         this.y = y;

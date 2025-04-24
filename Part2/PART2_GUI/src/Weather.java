@@ -1,4 +1,4 @@
-public class WeatherCondition {
+public class Weather {
 
     private String condition;       //muddy,dry,icy
 
@@ -7,7 +7,7 @@ public class WeatherCondition {
     private double confidenceModifier;
 
 
-    public WeatherCondition(String type, double speedMod,double fallMod,double conMod){
+    public Weather(String type, double speedMod,double fallMod,double conMod){
         this.condition = type;
         this.speedModifier = speedMod;
         this.fallRiskModifier = fallMod;
@@ -27,12 +27,13 @@ public class WeatherCondition {
     }//END getType
 
 
-    public static WeatherCondition getWeatherCondition(String type){
+    public static Weather getWeatherCondition(String type){
         switch(type.toLowerCase()){
-            case "muddy": return new WeatherCondition("Muddy", 0.8, 1.2, -0.1);
-            case "dry": return new WeatherCondition("Dry",1.2,0.8,+0.1);
-            case "icy": return new WeatherCondition("icy",0.6,1.5,-0.3);
-            default: return new WeatherCondition("Normal",1.0,1.0,0.0);
+            case "muddy": return new Weather("Muddy", 0.8, 1.2, -0.1);
+            case "dry": return new Weather("Dry",1.2,0.8,+0.1);
+            case "icy": return new Weather("icy",0.6,1.5,-0.3);
+            default: return new Weather("Normal",1.0,1.0,0.0);
         }//END switch
     }//END getWeatherCondition
-}//END WeatherCondition
+
+}

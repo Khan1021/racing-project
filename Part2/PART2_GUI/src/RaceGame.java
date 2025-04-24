@@ -37,7 +37,7 @@ public class RaceGame {
 
     //weather dropdown box
     private JComboBox<String> weatherSelector;
-    private WeatherCondition currentWeather;
+    private Weather currentWeather;
 
 
     //race timer
@@ -161,7 +161,7 @@ public class RaceGame {
 
         // Get selected weather
         String selectedWeather = (String) weatherSelector.getSelectedItem();
-        currentWeather = WeatherCondition.getWeatherCondition(selectedWeather);
+        currentWeather = Weather.getWeatherCondition(selectedWeather);
 
         List<ImageIcon> selectedImages = new ArrayList<>();
         for (JComboBox<ImageIcon> box : imageSelectors) {
@@ -201,7 +201,7 @@ public class RaceGame {
         int baseWidth = 700;
         int trackWidth = Math.max(300, (int) ((raceLength / 30.0) * baseWidth));
 
-        WeatherCondition selectedCondition = WeatherCondition.getWeatherCondition("muddy");
+        Weather selectedCondition = Weather.getWeatherCondition("muddy");
         race = new Race(horses, raceLength, selectedCondition);
 
         trackPanel = new raceTrack(horses, raceLength, trackWidth, currentWeather.getType());

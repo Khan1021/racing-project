@@ -12,7 +12,7 @@ public class raceTrack extends JPanel {
     private boolean raceOver = false;
     private String winnerName="";
     private int raceLength;
-    List<Horses> horses = new ArrayList<>(); //initialize the list
+    List<horsesGUI> horses = new ArrayList<>(); //initialize the list
 
     private String weatherType;
 
@@ -25,7 +25,7 @@ public class raceTrack extends JPanel {
         this.weatherType = weatherType;
         for (int i = 0; i < logicHorses.size(); i++) {
             int y = 90 + i * 100;
-            horses.add(new Horses(logicHorses.get(i), y, raceLength, maxTrackWidth));
+            horses.add(new horsesGUI(logicHorses.get(i), y, raceLength, maxTrackWidth));
         }//END for
 
 
@@ -46,12 +46,12 @@ public class raceTrack extends JPanel {
 
         // Lanes
         g2d.setColor(Color.WHITE);
-        for (Horses h : horses) {
+        for (horsesGUI h : horses) {
             g2d.fillRect(50, h.y + 20, h.trackWidth, 5);
         }
 
         // Finish Line - draw once after lanes
-        Horses firstHorse = horses.get(0);
+        horsesGUI firstHorse = horses.get(0);
         int finishX = 50 + firstHorse.trackWidth;
         int startY = horses.get(0).y - 20;
         int totalHeight = horses.size() * 100;
@@ -77,7 +77,7 @@ public class raceTrack extends JPanel {
         }//END switch
 
         // Draw horses
-        for (Horses h : horses) {
+        for (horsesGUI h : horses) {
             h.updatePosition();
 
            //horse image
