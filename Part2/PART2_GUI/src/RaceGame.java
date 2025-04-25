@@ -157,7 +157,7 @@ public class RaceGame {
             timer.stop();
         }
 
-        horses.clear();
+        //horses.clear();
 
         // Get selected weather
         String selectedWeather = (String) weatherSelector.getSelectedItem();
@@ -168,25 +168,16 @@ public class RaceGame {
             selectedImages.add((ImageIcon) box.getSelectedItem());
         }
 
-        // Create Horse objects
-        for (int i = 0; i < sliders.size(); i++) {
-            String name = "HORSE " + (i + 1);
-            double confidence = sliders.get(i).getValue() / 100.0;
-
-            ImageIcon upright = (ImageIcon) imageSelectors.get(i).getSelectedItem();
-            String fileName = upright.getDescription();
-            String baseName = fileName.substring(0, fileName.lastIndexOf("."));
-            ImageIcon fallen = loadHorseImage(baseName + "Fallen.png");
-
-            if (fallen == null) {
-                throw new RuntimeException("Missing fallen image for: " + baseName + "Fallen.png");
-            }
-
-            Horse h = new Horse(upright, fallen, name, confidence);
+        for (int i = 0; i < horses.size(); i++) {
+            Horse h = horses.get(i);
+            h.setConfidence(sliders.get(i).getValue() / 100.0);
             h.setBaseSpeed(speedSliders.get(i).getValue());
+            h.goBackToStart();  //resets distance, fall state, and timers
+        }//END for
 
-            horses.add(h);
-        }
+
+
+
 
         // Get track length
         int raceLength;
@@ -203,6 +194,7 @@ public class RaceGame {
 
         Weather selectedCondition = Weather.getWeatherCondition("muddy");
         race = new Race(horses, raceLength, selectedCondition);
+        race.startRace();
 
         trackPanel = new raceTrack(horses, raceLength, trackWidth, currentWeather.getType());
 
@@ -252,7 +244,7 @@ public class RaceGame {
             }
         });
 
-        timer.start(); // ✅ Start the race after setup
+        timer.start(); //Start the race after setup
     }//END startRace
 
 
@@ -378,6 +370,29 @@ public class RaceGame {
 
 
         resizeFrameForLanes();
+
+        horses.clear();  // Reset the horse list
+
+        for (int i = 0; i < sliders.size(); i++) {
+            String name = "HORSE " + (i + 1);
+            double confidence = sliders.get(i).getValue() / 100.0;
+
+            ImageIcon upright = (ImageIcon) imageSelectors.get(i).getSelectedItem();
+            String fileName = upright.getDescription();
+            String baseName = fileName.substring(0, fileName.lastIndexOf("."));
+            ImageIcon fallen = loadHorseImage(baseName + "Fallen.png");
+
+            if (fallen == null) {
+                throw new RuntimeException("Missing fallen image for: " + baseName + "Fallen.png");
+            }
+
+            Horse h = new Horse(upright, fallen, name, confidence);
+            h.setBaseSpeed(speedSliders.get(i).getValue());
+
+            horses.add(h); // the horse exists BEFORE startRaceGUI() uses it
+        }
+
+
         frame.revalidate();
         frame.repaint();
     }//END generateHorseSettings
