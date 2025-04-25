@@ -48,18 +48,22 @@ public class Race
      */
     public void startRace()
     {
-        long now = System.currentTimeMillis();
-        for(Horse h: horses){
-            h.setStartTime(now);
-        }//END for
-
-        //declare a local variable to tell us when the race is finished
-        boolean finished = false;
 
         //reset all the lanes (all horses not fallen and back to 0).
         for(Horse h: horses){
             h.goBackToStart();
         }//END for
+
+        long now = System.currentTimeMillis();
+        for(Horse h: horses){
+            h.setStartTime(now);
+            System.out.println("Race started at "+ now);
+        }//END for
+
+        //declare a local variable to tell us when the race is finished
+        boolean finished = false;
+
+
     }//END startRace
 
 
@@ -68,9 +72,12 @@ public class Race
        for(Horse h : horses){
            moveHorse(h);
 
+
                 //record endTime if horse has just finished
                 if(h.getDistanceTravelled() >= raceLength && h.getEndTime() ==0){
+                    h.setDistanceTravelled(raceLength);
                     h.setEndTime(System.currentTimeMillis());
+                    System.out.println(h.getName() + " finished! End time set.");
                 }//END if
        }//END for
 
@@ -79,6 +86,8 @@ public class Race
             System.out.println(h.getName()+" distance "+h.getDistanceTravelled());
         }//END for
     }//END updateRaceState
+
+
 
 
 
@@ -104,8 +113,13 @@ public class Race
             if (Math.random() < moveChance) {
                 for (int i = 0; i < theHorse.getBaseSpeed(); i++) {
                     theHorse.moveForward();
+                    if (theHorse.getDistanceTravelled() >= raceLength) {
+                        theHorse.setDistanceTravelled(raceLength);
+                        break;
+                    }//END if
                 }//END for
             }//END if
+
 
             // Fall logic
             double fallModifier = currentCondition != null ? currentCondition.getFallRiskModifier() : 1.0;
@@ -126,7 +140,7 @@ public class Race
      */
     private boolean raceWonBy(Horse theHorse)
     {
-        if (theHorse.getDistanceTravelled() == raceLength)
+        if (theHorse.getDistanceTravelled() >= raceLength)
         {
             return true;
         }//END if
@@ -190,7 +204,7 @@ public class Race
     }//END getRaceLength
 
 
-
+    //statistics
     public String getPerformanceMetrics(){
         StringBuilder report = new StringBuilder("\uD83C\uDFC1 Race performance metrics:\n");
 
@@ -201,6 +215,7 @@ public class Race
             //time taken to complete race in seconds
             long start = h.getStartTime();
             long end = h.getEndTime();
+
             if(end >0 && start>0){
                 long durationMillis = end - start;
                 double durationSeconds = durationMillis / 1000.0;
@@ -210,6 +225,7 @@ public class Race
                 report.append("Time: ").append(String.format("%.2f", durationSeconds)).append(" sec\n");
                 report.append("Avg Speed: ").append(String.format("%.2f",averageSpeed)).append(" tiles/second\n");
             }//END if
+
             else{
                 report.append("Time: N/A (Did not finish)\n");
                 report.append("Average Speed: N/A\n");
@@ -218,6 +234,7 @@ public class Race
 
             //fall count
             report.append(" Falls: ").append(h.getFallCount()).append("\n\n");
+
         }//END for
 
 

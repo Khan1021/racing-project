@@ -91,6 +91,10 @@ public class Horse
         return distanceTravelled;
     }//END getDistanceTravelled
 
+    public void setDistanceTravelled(int distance) {
+         this.distanceTravelled = distance;
+    }
+
     public String getName()
     {
         return horseName;
@@ -102,6 +106,8 @@ public class Horse
     {
         this.distanceTravelled=0;
         this.hasFallen=false;
+        this.endTime = 0;
+        this.startTime=0;
     }//END goBackToStart
 
     public boolean hasFallen()

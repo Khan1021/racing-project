@@ -188,7 +188,7 @@ public class RaceGame {
             horses.add(h);
         }
 
-        // Get track length safely
+        // Get track length
         int raceLength;
         try {
             raceLength = Integer.parseInt(trackLengthField.getText());
@@ -323,7 +323,7 @@ public class RaceGame {
             speedSlider.setPaintTicks(true);
             speedSlider.setPaintLabels(true);
 
-            // 👇 NEW: Make a NEW combo box for EACH horse
+            //Make a  combo box for each horse
             JComboBox<ImageIcon> imageBox = new JComboBox<>();
 
             ImageIcon morgan = loadHorseImage("Morgan.png");
