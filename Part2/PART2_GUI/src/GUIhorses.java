@@ -31,13 +31,14 @@ public class GUIhorses {
     int raceLength;
     int trackWidth;
 
+    ImageIcon horseImage;
 
     //constructor to set up a horse and race length
-    public GUIhorses(Horse logicHorse, int y, int raceLength, int trackWidth) {
+    public GUIhorses(Horse logicHorse,ImageIcon horseImage ,int y, int raceLength, int trackWidth) {
         this.logicHorse = logicHorse;
+        this.horseImage = horseImage;
         this.x = 50;
         this.y = y;
-
         this.raceLength = raceLength;
         this.trackWidth = trackWidth;
     }//END Horses constructor
@@ -64,8 +65,14 @@ public class GUIhorses {
 
 
     public ImageIcon getHorseImage(){
-        return logicHorse.getCurrentImage();
+        if(logicHorse.hasFallen()){
+            return logicHorse.getCurrentImage();
+        }
+
+        else{
+            return horseImage;
+        }//END else
     }//END getHorseImage
 
 
-}//END Horses
+}//END GUIHorses

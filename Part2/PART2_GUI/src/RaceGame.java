@@ -24,7 +24,7 @@ public class RaceGame {
     private List<JComboBox<ImageIcon>> imageSelectors = new ArrayList<>();
 
     private ImageIcon horseImage;
-
+    private List<ImageIcon> selectedImages = new ArrayList<>();
 
     private List<JSlider> confidenceSliders = new ArrayList<>();
 
@@ -196,7 +196,7 @@ public class RaceGame {
         race = new Race(horses, raceLength, selectedCondition);
         race.startRace();
 
-        trackPanel = new raceTrack(horses, raceLength, trackWidth, currentWeather.getType());
+        trackPanel = new raceTrack(horses, selectedImages,raceLength, trackWidth, currentWeather.getType());
 
         if (scrollPane != null) {
             frame.remove(scrollPane);
@@ -373,11 +373,16 @@ public class RaceGame {
 
         horses.clear();  // Reset the horse list
 
+
+        selectedImages.clear(); //clear old list first
+
         for (int i = 0; i < sliders.size(); i++) {
             String name = "HORSE " + (i + 1);
             double confidence = sliders.get(i).getValue() / 100.0;
 
             ImageIcon upright = (ImageIcon) imageSelectors.get(i).getSelectedItem();
+            selectedImages.add(upright);
+
             String fileName = upright.getDescription();
             String baseName = fileName.substring(0, fileName.lastIndexOf("."));
             ImageIcon fallen = loadHorseImage(baseName + "Fallen.png");

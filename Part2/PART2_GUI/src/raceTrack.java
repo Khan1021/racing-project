@@ -4,6 +4,7 @@
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
+
 //for the arrayList
 import java.util.ArrayList;
 
@@ -12,20 +13,22 @@ public class raceTrack extends JPanel {
     private boolean raceOver = false;
     private String winnerName="";
     private int raceLength;
-    List<GUIhorses> horses = new ArrayList<>(); //initialize the list
 
+    private ArrayList<GUIhorses> horses;
     private String weatherType;
 
     private ImageIcon horseImage;
 
     //constructor for raceTrack
-    public raceTrack(List<Horse> logicHorses,int raceLength, int maxTrackWidth,String weatherType ) {
+    public raceTrack(List<Horse> logicHorses,List<ImageIcon> selectedImages,int raceLength, int maxTrackWidth,String weatherType ) {
         this.raceLength = raceLength;
-        horses = new ArrayList<>();
         this.weatherType = weatherType;
+
+        horses = new ArrayList<>();
+
         for (int i = 0; i < logicHorses.size(); i++) {
             int y = 90 + i * 100;
-            horses.add(new GUIhorses(logicHorses.get(i), y, raceLength, maxTrackWidth));
+            horses.add(new GUIhorses(logicHorses.get(i),selectedImages.get(i), y, raceLength, maxTrackWidth));
         }//END for
 
 
