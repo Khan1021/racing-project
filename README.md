@@ -39,19 +39,19 @@ Clone the repository locally
 ## running the program part1
 
  - open the command prompt on your pc
- - navigate to the directory where you cloned the repository on the CMD using 'cd *path1/part1..*' (write your own path)
+ - navigate to the directory where you cloned the repository on the CMD using 'cd *yourPath/part1/Race/src..*' 
  - to check if in right directory use the 'dir' command
 	 - this lists all files in the directory
- - now 'javac *Main.java*.java'
+ - now 'javac *.java'
 - 'java Main'
 -  now you should have a textual representation of the horse simulation
 
 ## running the program part2
  - open the command prompt on your pc
- - navigate to the directory where you cloned the repository on the CMD using 'cd *path1/part2..*' (write your own path)
+ - navigate to the directory where you cloned the repository on the CMD using 'cd *yourPath1/part2/PART2_GUI/src*
  - to check if in right directory use the 'dir' command
 	 - this lists all files in the directory
- - now 'javac *Main.java*.java'
+ - now 'javac *.java'
 - 'java Main'
 -  now you should have a graphical representation of the horse simulation
 
