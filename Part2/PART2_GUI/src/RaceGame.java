@@ -26,7 +26,6 @@ public class RaceGame {
     private ImageIcon horseImage;
     private List<ImageIcon> selectedImages = new ArrayList<>();
 
-    private List<JSlider> confidenceSliders = new ArrayList<>();
 
     //creating list to store
     private List<JSlider> speedSliders = new ArrayList<>();

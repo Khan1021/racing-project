@@ -32,7 +32,7 @@ public class Weather {
             case "muddy": return new Weather("Muddy", 0.8, 1.2, -0.1);
             case "dry": return new Weather("Dry",1.2,0.8,+0.1);
             case "icy": return new Weather("icy",0.6,1.5,-0.3);
-            default: return new Weather("Normal",1.0,1.0,0.0);
+            default: return new Weather("Normal",1.0,1.0,1.0);
         }//END switch
     }//END getWeatherCondition
 
